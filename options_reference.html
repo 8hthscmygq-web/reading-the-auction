@@ -1,0 +1,1910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Options Market Structure — NQ Futures Reference</title>
+<style>
+:root {
+  --bg: #F9F9F7;
+  --sidebar-bg: #F2F2EF;
+  --sidebar-hover: #E8E8E4;
+  --sidebar-active: #DEDED8;
+  --header-bg: #1A1A24;
+  --text: #18181E;
+  --text-sec: #444454;
+  --text-muted: #888898;
+  --gold: #9A7B20;
+  --gold-light: #C4A040;
+  --border: #DCDCDA;
+  --callout-bg: #F2F2EF;
+  --callout-border: #B8941A;
+  --bg-grounded: #12382A;
+  --text-grounded: #C8ECD8;
+  --bg-inference: #3A1818;
+  --text-inference: #F8D8CC;
+  --bg-critical: #1A1A24;
+  --text-critical: #E8E8F8;
+  --bg-note: #EEF4FC;
+  --border-note: #4A80C0;
+  --bg-warning: #FDF6E8;
+  --border-warning: #C08820;
+  --sidebar-w: 270px;
+  --content-max: 800px;
+  --pb-row-bg: #F4F4F2;
+  --table-even: rgba(0,0,0,0.02);
+  --thead-bg: #1A1A24;
+  --thead-text: #E8E8F8;
+  --checklist-border: rgba(0,0,0,0.06);
+  --evidence-grounded-bg: #EAF5EF;
+  --evidence-grounded-border: #1B5A38;
+  --evidence-inference-bg: #FDF0EC;
+  --evidence-inference-border: #8A3020;
+  --tool-bg: #F4F4F2;
+  --win: #1B6B40;
+  --loss: #8A2020;
+  --code-bg: #F0F0EE;
+}
+body.dark {
+  --bg: #13131A;
+  --sidebar-bg: #1A1A22;
+  --sidebar-hover: #22222E;
+  --sidebar-active: #2A2A38;
+  --header-bg: #0C0C12;
+  --text: #E4E4F0;
+  --text-sec: #9898B8;
+  --text-muted: #585870;
+  --gold: #C8A840;
+  --gold-light: #E0C860;
+  --border: #2A2A38;
+  --callout-bg: #1A1A22;
+  --callout-border: #C8A840;
+  --bg-grounded: #0A2018;
+  --text-grounded: #90D8B0;
+  --bg-inference: #280E0E;
+  --text-inference: #F8C8B0;
+  --bg-critical: #0C0C12;
+  --text-critical: #D8D8F0;
+  --bg-note: #0E1828;
+  --border-note: #3060A0;
+  --bg-warning: #181408;
+  --border-warning: #907020;
+  --pb-row-bg: #181820;
+  --table-even: rgba(255,255,255,0.025);
+  --thead-bg: #0C0C12;
+  --thead-text: #C8A840;
+  --checklist-border: rgba(255,255,255,0.06);
+  --evidence-grounded-bg: #0A1E14;
+  --evidence-grounded-border: #1B5A38;
+  --evidence-inference-bg: #1A0C0C;
+  --evidence-inference-border: #8A3020;
+  --tool-bg: #181820;
+  --win: #2AAA70;
+  --loss: #E05040;
+  --code-bg: #1E1E28;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 17px; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Georgia, 'Book Antiqua', Palatino, serif;
+  line-height: 1.75;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── SIDEBAR ── */
+#sidebar {
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--border);
+  position: fixed;
+  top: 0; left: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 100;
+  transition: transform 0.25s ease;
+}
+#sidebar-header {
+  background: var(--header-bg);
+  color: #D8D8F0;
+  padding: 20px 18px 16px;
+}
+#sidebar-header .title {
+  font-family: Georgia, serif;
+  font-size: 14px;
+  font-weight: normal;
+  letter-spacing: 0.04em;
+  color: #D8D8F0;
+  line-height: 1.3;
+  margin-bottom: 3px;
+}
+#sidebar-header .edition {
+  font-size: 10px;
+  color: #585870;
+  font-family: -apple-system, sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.nav-part {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 14px 18px 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+}
+.nav-part:hover { color: var(--gold); }
+.nav-part .arrow { transition: transform 0.2s; font-size: 9px; }
+.nav-part.collapsed .arrow { transform: rotate(-90deg); }
+.nav-part-items { overflow: hidden; transition: max-height 0.3s ease; max-height: 800px; }
+.nav-part-items.collapsed { max-height: 0; }
+.nav-link {
+  display: block;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 12.5px;
+  color: var(--text-sec);
+  text-decoration: none;
+  padding: 6px 18px 6px 22px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  border-left: 2px solid transparent;
+  line-height: 1.35;
+}
+.nav-link:hover { background: var(--sidebar-hover); color: var(--text); }
+.nav-link.active {
+  background: var(--sidebar-active);
+  color: var(--text);
+  border-left-color: var(--gold);
+  font-weight: 500;
+}
+.nav-divider { height: 1px; background: var(--border); margin: 6px 0; }
+
+/* dark mode + settings row */
+.sidebar-tools {
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
+}
+.sidebar-tools button {
+  font-family: -apple-system, sans-serif;
+  font-size: 11px;
+  color: var(--text-muted);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 4px 10px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+}
+.sidebar-tools button:hover { color: var(--gold); border-color: var(--gold); }
+
+/* ── MAIN CONTENT ── */
+#content {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  min-height: 100vh;
+}
+.page { display: none; padding: 48px 52px 80px; max-width: calc(var(--sidebar-w) + var(--content-max)); }
+.page.active { display: block; }
+
+/* ── TYPOGRAPHY ── */
+h1 {
+  font-family: Georgia, serif;
+  font-size: 2rem;
+  font-weight: normal;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+h2 {
+  font-family: Georgia, serif;
+  font-size: 1.2rem;
+  font-weight: normal;
+  color: var(--text);
+  margin: 2.2rem 0 0.75rem;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--border);
+}
+h3 {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 1.75rem 0 0.5rem;
+}
+p { margin-bottom: 1rem; font-size: 1rem; }
+strong { color: var(--text); }
+.chapter-num {
+  font-family: -apple-system, sans-serif;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+.part-label {
+  font-family: -apple-system, sans-serif;
+  font-size: 10.5px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.chapter-intro {
+  font-size: 1.05rem;
+  color: var(--text-sec);
+  font-style: italic;
+  margin: 0 0 1.75rem;
+  line-height: 1.65;
+}
+hr.section { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+/* ── COVER PAGE ── */
+.cover-wrap {
+  min-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 20px;
+  max-width: 640px;
+}
+.cover-title {
+  font-family: Georgia, serif;
+  font-size: 2.8rem;
+  font-weight: normal;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  line-height: 1.1;
+  margin-bottom: 10px;
+}
+.cover-subtitle {
+  font-family: Georgia, serif;
+  font-size: 1.05rem;
+  color: var(--text-sec);
+  font-style: italic;
+  margin-bottom: 28px;
+}
+.cover-rule { border: none; border-top: 2px solid var(--gold); width: 56px; margin: 0 0 24px; }
+.cover-sources {
+  font-family: -apple-system, sans-serif;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 2;
+  letter-spacing: 0.02em;
+}
+.cover-meta {
+  font-family: -apple-system, sans-serif;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 36px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ── CALLOUT BOXES ── */
+.callout {
+  background: var(--callout-bg);
+  border-left: 3px solid var(--gold);
+  padding: 16px 20px;
+  margin: 1.75rem 0;
+  border-radius: 0 4px 4px 0;
+}
+.callout-title {
+  font-family: -apple-system, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+.callout p { margin-bottom: 0.5rem; font-size: 0.95rem; }
+.callout p:last-child { margin-bottom: 0; }
+
+.badge-grounded {
+  display: inline-block;
+  background: var(--bg-grounded);
+  color: var(--text-grounded);
+  font-family: -apple-system, sans-serif;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 3px;
+  margin-bottom: 8px;
+}
+.badge-inference {
+  display: inline-block;
+  background: var(--bg-inference);
+  color: var(--text-inference);
+  font-family: -apple-system, sans-serif;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 3px;
+  margin-bottom: 8px;
+}
+.evidence-box {
+  padding: 14px 18px;
+  margin: 1.5rem 0;
+  border-radius: 4px;
+  font-size: 0.92rem;
+  line-height: 1.65;
+}
+.evidence-box.grounded { background: var(--evidence-grounded-bg); border-left: 3px solid var(--evidence-grounded-border); }
+.evidence-box.inference { background: var(--evidence-inference-bg); border-left: 3px solid var(--evidence-inference-border); }
+.evidence-box p { margin-bottom: 0.4rem; }
+.evidence-box p:last-child { margin-bottom: 0; }
+
+.critical-box {
+  background: var(--bg-critical);
+  color: var(--text-critical);
+  padding: 18px 22px;
+  margin: 1.75rem 0;
+  border-radius: 4px;
+}
+.critical-box .critical-title {
+  font-family: -apple-system, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+  margin-bottom: 10px;
+}
+.critical-box p { font-size: 0.95rem; margin-bottom: 0.5rem; line-height: 1.65; }
+.critical-box p:last-child { margin-bottom: 0; }
+.critical-box strong { color: var(--gold-light); }
+
+.note-box {
+  background: var(--bg-note);
+  border-left: 3px solid var(--border-note);
+  padding: 14px 18px;
+  margin: 1.5rem 0;
+  border-radius: 0 4px 4px 0;
+  font-size: 0.92rem;
+}
+.warning-box {
+  background: var(--bg-warning);
+  border-left: 3px solid var(--border-warning);
+  padding: 14px 18px;
+  margin: 1.5rem 0;
+  border-radius: 0 4px 4px 0;
+  font-size: 0.92rem;
+}
+.note-box p, .warning-box p { margin-bottom: 0.4rem; font-size: 0.92rem; }
+.note-box p:last-child, .warning-box p:last-child { margin-bottom: 0; }
+
+/* ── KEY POINT ── */
+.key-point {
+  font-family: Georgia, serif;
+  font-size: 1.05rem;
+  font-style: italic;
+  color: var(--text-sec);
+  border-left: 3px solid var(--gold);
+  padding: 10px 20px;
+  margin: 1.75rem 0;
+  line-height: 1.65;
+}
+
+/* ── TABLES ── */
+.table-wrap { overflow-x: auto; margin: 1.5rem 0; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 13px;
+  line-height: 1.45;
+}
+thead tr { background: var(--thead-bg); color: var(--thead-text); }
+thead th {
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  border: none;
+}
+tbody tr { border-bottom: 1px solid var(--border); }
+tbody tr:nth-child(even) { background: var(--table-even); }
+tbody td { padding: 9px 14px; vertical-align: top; line-height: 1.5; }
+tbody td:first-child { font-weight: 500; color: var(--gold); }
+
+/* ── PLAYBOOK ROWS ── */
+.playbook-block {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 1.5rem 0;
+}
+.playbook-row {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  border-bottom: 1px solid var(--border);
+}
+.playbook-row:last-child { border-bottom: none; }
+.playbook-label {
+  background: var(--header-bg);
+  color: var(--gold-light);
+  font-family: -apple-system, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 14px;
+  display: flex;
+  align-items: flex-start;
+  line-height: 1.3;
+}
+.playbook-content {
+  padding: 12px 16px;
+  font-size: 0.92rem;
+  line-height: 1.65;
+  background: var(--pb-row-bg);
+  font-family: -apple-system, sans-serif;
+}
+
+/* ── CHECKLIST ── */
+.checklist {
+  background: var(--callout-bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 18px 22px;
+  margin: 1.5rem 0;
+}
+.checklist-title {
+  font-family: -apple-system, sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.checklist ul { list-style: none; padding: 0; }
+.checklist li {
+  font-family: -apple-system, sans-serif;
+  font-size: 13.5px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--checklist-border);
+  line-height: 1.5;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+.checklist li:last-child { border-bottom: none; }
+.checklist li input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  border: 2px solid var(--gold);
+  border-radius: 3px;
+  margin-top: 2px;
+  cursor: pointer;
+  position: relative;
+  background: transparent;
+  transition: background 0.15s, border-color 0.15s;
+}
+.checklist li input[type="checkbox"]:checked {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+.checklist li input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 3px; top: 0px;
+  width: 5px; height: 9px;
+  border: 2px solid #fff;
+  border-top: none; border-left: none;
+  transform: rotate(45deg);
+}
+.checklist li span { flex: 1; transition: opacity 0.15s; }
+.checklist li.checked span { text-decoration: line-through; opacity: 0.4; }
+.checklist li .sub {
+  display: block;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-top: 1px;
+  font-weight: normal;
+}
+
+/* ── TOOL SECTION ── */
+.tool-section {
+  background: var(--tool-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 24px 28px;
+  margin: 2rem 0;
+}
+.tool-title {
+  font-family: -apple-system, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 5px;
+}
+.tool-desc {
+  font-family: -apple-system, sans-serif;
+  font-size: 13px;
+  color: var(--text-sec);
+  margin-bottom: 18px;
+  line-height: 1.5;
+}
+.s-btn {
+  font-family: -apple-system, sans-serif;
+  font-size: 12px;
+  padding: 6px 13px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  border-radius: 4px;
+  color: var(--text-sec);
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+.s-btn:hover { background: var(--sidebar-hover); }
+.s-btn.active {
+  background: var(--header-bg);
+  color: var(--gold-light);
+  border-color: var(--header-bg);
+}
+
+/* ── EXAM ── */
+.question-block {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  transition: border-color 0.2s;
+}
+.question-block.correct { border-color: var(--win); }
+.question-block.wrong { border-color: var(--loss); }
+.question-label {
+  font-family: -apple-system, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 7px;
+}
+.question-text {
+  font-family: -apple-system, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 14px;
+  line-height: 1.55;
+}
+.answer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+}
+@media(max-width:600px){.answer-grid{grid-template-columns:1fr;}}
+.ans-btn {
+  font-family: -apple-system, sans-serif;
+  font-size: 12.5px;
+  padding: 9px 13px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  border-radius: 4px;
+  color: var(--text-sec);
+  text-align: left;
+  line-height: 1.4;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+.ans-btn:hover:not(:disabled) { background: var(--sidebar-hover); border-color: var(--gold); color: var(--text); }
+.ans-btn.sel-correct { border-color: var(--win); color: var(--win); background: var(--evidence-grounded-bg); }
+.ans-btn.sel-wrong { border-color: var(--loss); color: var(--loss); background: var(--evidence-inference-bg); }
+.ans-btn.show-correct { border-color: var(--win); color: var(--text-muted); }
+.ans-btn:disabled { cursor: default; }
+.feedback-line {
+  margin-top: 11px;
+  font-family: -apple-system, sans-serif;
+  font-size: 12.5px;
+  line-height: 1.55;
+  padding: 9px 13px;
+  border-radius: 4px;
+  display: none;
+}
+.feedback-line.show { display: block; }
+.feedback-line.correct { background: var(--evidence-grounded-bg); color: var(--win); border-left: 3px solid var(--evidence-grounded-border); }
+.feedback-line.wrong { background: var(--evidence-inference-bg); color: var(--loss); border-left: 3px solid var(--evidence-inference-border); }
+.score-display {
+  font-family: -apple-system, sans-serif;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 18px;
+  letter-spacing: 0.05em;
+}
+.submit-btn {
+  font-family: -apple-system, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 10px 24px;
+  background: var(--header-bg);
+  color: var(--gold-light);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.submit-btn:hover { opacity: 0.85; }
+.score-result {
+  background: var(--callout-bg);
+  border-left: 3px solid var(--gold);
+  padding: 16px 20px;
+  margin-top: 20px;
+  border-radius: 0 4px 4px 0;
+  display: none;
+}
+.score-result.show { display: block; }
+.score-result .score-big {
+  font-family: Georgia, serif;
+  font-size: 2rem;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.score-result .score-msg {
+  font-family: -apple-system, sans-serif;
+  font-size: 13px;
+  color: var(--text-sec);
+  line-height: 1.55;
+}
+.retry-btn {
+  margin-top: 12px;
+  font-family: -apple-system, sans-serif;
+  font-size: 11px;
+  color: var(--text-muted);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 4px 12px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+}
+.retry-btn:hover { color: var(--gold); border-color: var(--gold); }
+
+/* ── DELTA TABLE ── */
+.delta-highlight { background: rgba(154,123,32,0.12) !important; }
+
+/* ── ASCII / CODE BLOCK ── */
+.code-block {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 18px 20px;
+  margin: 1.5rem 0;
+  font-family: 'Courier New', 'Lucida Console', monospace;
+  font-size: 12.5px;
+  line-height: 1.85;
+  overflow-x: auto;
+  color: var(--text-sec);
+}
+.code-block .hi { color: var(--gold); font-weight: bold; }
+.code-block .gr { color: var(--win); }
+.code-block .rd { color: var(--loss); }
+.code-block .cm { color: var(--text-muted); font-style: italic; }
+
+/* ── GEX DIAL (simplified) ── */
+.gex-dial {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 1.5rem 0;
+  font-family: -apple-system, sans-serif;
+}
+.gex-col { padding: 14px 16px; border-right: 1px solid var(--border); }
+.gex-col:last-child { border-right: none; }
+.gex-col-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.gex-col.neg .gex-col-label { color: var(--loss); }
+.gex-col.neu .gex-col-label { color: var(--gold); }
+.gex-col.pos .gex-col-label { color: var(--win); }
+.gex-col ul { list-style: none; padding: 0; }
+.gex-col li { font-size: 12px; color: var(--text-sec); padding: 2px 0; line-height: 1.45; }
+.gex-col li::before { content: '— '; color: var(--text-muted); }
+
+/* ── HISTOGRAM VISUAL ── */
+.histogram-section { margin: 1.5rem 0; }
+.hist-row { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; font-family: -apple-system, sans-serif; }
+.hist-lbl { font-size: 11px; color: var(--text-muted); min-width: 52px; text-align: right; font-family: 'Courier New', monospace; }
+.hist-bar-wrap { flex: 1; display: flex; align-items: center; gap: 8px; }
+.hist-bar { height: 14px; border-radius: 2px; }
+.hist-note { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+
+/* ── WALL MAP ── */
+.wall-map { border: 1px solid var(--border); border-radius: 4px; overflow: hidden; margin: 1.5rem 0; }
+.wall-row { display: flex; align-items: center; gap: 12px; padding: 8px 14px; border-bottom: 1px solid var(--border); font-family: -apple-system, sans-serif; font-size: 12.5px; }
+.wall-row:last-child { border-bottom: none; }
+.wall-price { font-family: 'Courier New', monospace; font-size: 12px; min-width: 52px; }
+.wall-bar-wrap { flex: 1; }
+.wall-bar-track { height: 12px; background: var(--tool-bg); border-radius: 2px; overflow: hidden; }
+.wall-bar-fill { height: 100%; border-radius: 2px; }
+.wall-tag { font-size: 11.5px; min-width: 160px; text-align: right; }
+.wall-row.cw { background: rgba(27,106,64,0.05); }
+.wall-row.pw { background: rgba(138,32,32,0.05); }
+.wall-row.zg { background: rgba(154,123,32,0.06); }
+.wall-row.current { background: rgba(154,123,32,0.1); border-left: 3px solid var(--gold); }
+
+/* ── SIMULATOR ── */
+.sim-wrap { margin: 1.5rem 0; }
+.sim-slider-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; font-family: -apple-system, sans-serif; font-size: 13px; }
+input[type=range] { flex: 1; accent-color: var(--gold); }
+.sim-price { font-family: 'Courier New', monospace; font-size: 14px; color: var(--gold); min-width: 58px; text-align: right; font-weight: bold; }
+.sim-status { background: var(--callout-bg); border-left: 3px solid var(--gold); padding: 12px 16px; border-radius: 0 4px 4px 0; font-family: -apple-system, sans-serif; font-size: 13px; line-height: 1.6; color: var(--text-sec); margin-top: 12px; }
+.sim-status strong { color: var(--gold); }
+
+/* ── PROGRESS BAR ── */
+.reading-bar {
+  position: fixed;
+  top: 0; left: var(--sidebar-w);
+  right: 0; height: 2px;
+  background: var(--gold);
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 0.1s;
+  z-index: 200;
+  opacity: 0.7;
+}
+
+/* ── MOBILE ── */
+#menu-toggle {
+  display: none;
+  position: fixed;
+  top: 14px; left: 14px;
+  z-index: 200;
+  background: var(--header-bg);
+  color: #F0E8CC;
+  border: none;
+  border-radius: 4px;
+  width: 38px; height: 38px;
+  font-size: 16px;
+  cursor: pointer;
+}
+@media (max-width: 900px) {
+  #menu-toggle { display: flex; align-items: center; justify-content: center; }
+  #sidebar { transform: translateX(-100%); }
+  #sidebar.open { transform: translateX(0); }
+  #content { margin-left: 0; }
+  .page { padding: 56px 22px 60px; }
+  .cover-title { font-size: 2.2rem; }
+  .reading-bar { left: 0; }
+  .gex-dial { grid-template-columns: 1fr; }
+  .answer-grid { grid-template-columns: 1fr; }
+  .playbook-row { grid-template-columns: 90px 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="reading-bar" id="rbar"></div>
+<button id="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+<!-- ══════════════════════════════════════════ SIDEBAR ══════════════════════════════════════════ -->
+<nav id="sidebar">
+  <div id="sidebar-header">
+    <div class="title">Options Market Structure</div>
+    <div class="edition">NQ Futures Reference</div>
+  </div>
+
+  <div class="nav-part" onclick="togglePart(this)"><span>Foundations</span><span class="arrow">▾</span></div>
+  <div class="nav-part-items">
+    <a class="nav-link active" onclick="show('cover')">Cover &amp; Contents</a>
+    <a class="nav-link" onclick="show('ch0')">0 — Abbreviations &amp; What Is an Option?</a>
+    <a class="nav-link" onclick="show('ch1')">1 — Why Futures Traders Care</a>
+    <a class="nav-link" onclick="show('ch2')">2 — The Casino: How Dealers Work</a>
+  </div>
+
+  <div class="nav-part" onclick="togglePart(this)"><span>Option Mechanics</span><span class="arrow">▾</span></div>
+  <div class="nav-part-items">
+    <a class="nav-link" onclick="show('ch3')">3 — Why Does an Option's Price Change?</a>
+    <a class="nav-link" onclick="show('ch4')">4 — What Is Delta? Three Ways to Read It</a>
+    <a class="nav-link" onclick="show('ch5')">5 — The Dealer Hedging Story</a>
+    <a class="nav-link" onclick="show('ch6')">6 — Price Acceleration: The Turbocharger</a>
+    <a class="nav-link" onclick="show('ch7')">7 — Delta, Gamma &amp; Vanna</a>
+  </div>
+
+  <div class="nav-part" onclick="togglePart(this)"><span>Market Structure</span><span class="arrow">▾</span></div>
+  <div class="nav-part-items">
+    <a class="nav-link" onclick="show('ch8')">8 — 0DTE vs 5DTE: Grenade vs Brick Wall</a>
+    <a class="nav-link" onclick="show('ch9')">9 — GEX: The Session Dial</a>
+    <a class="nav-link" onclick="show('ch10')">10 — VIX: How It's Derived</a>
+    <a class="nav-link" onclick="show('ch11')">11 — Put Wall, Call Wall, Zero Gamma, Max Pain</a>
+    <a class="nav-link" onclick="show('ch12')">12 — GEX Histogram: The Full Map</a>
+  </div>
+
+  <div class="nav-part" onclick="togglePart(this)"><span>London Trader</span><span class="arrow">▾</span></div>
+  <div class="nav-part-items">
+    <a class="nav-link" onclick="show('ch13')">13 — For London Traders: Why 0DTE Doesn't Matter</a>
+    <a class="nav-link" onclick="show('ch14')">14 — Pre-Session Checklist: 5DTE Walls</a>
+    <a class="nav-link" onclick="show('ch15')">15 — What to Expect at Each Wall Type</a>
+    <a class="nav-link" onclick="show('ch16')">16 — Strategies Around the Walls</a>
+  </div>
+
+  <div class="nav-part" onclick="togglePart(this)"><span>Reference</span><span class="arrow">▾</span></div>
+  <div class="nav-part-items">
+    <a class="nav-link" onclick="show('ch17')">17 — QQQ → NQ Conversion</a>
+    <a class="nav-link" onclick="show('ch18')">18 — Tools</a>
+    <a class="nav-link" onclick="show('glossary')">Glossary</a>
+  </div>
+
+  <div class="nav-part" onclick="togglePart(this)"><span>Interactive</span><span class="arrow">▾</span></div>
+  <div class="nav-part-items">
+    <a class="nav-link" onclick="show('sim-gex')">GEX Regime Simulator</a>
+    <a class="nav-link" onclick="show('sim-walls')">Wall Simulator</a>
+    <a class="nav-link" onclick="show('exam')">Knowledge Exam</a>
+  </div>
+
+  <div class="sidebar-tools">
+    <button onclick="document.body.classList.toggle('dark')">Toggle dark mode</button>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════ CONTENT ══════════════════════════════════════════ -->
+<div id="content">
+
+<!-- ═══ COVER ═══ -->
+<div class="page active" id="cover">
+  <div class="cover-wrap">
+    <div class="cover-title">Options Market Structure</div>
+    <div class="cover-subtitle">How the options market shapes NQ futures price action — explained from first principles</div>
+    <div class="cover-rule"></div>
+    <div class="cover-sources">
+      Based on research by SqueezeMetrics (GEX white paper, Implied Order Book)<br>
+      Instrument: NQ Futures · Primary session: London 08:00–12:00 CET<br>
+      Primary tool: TLADe GEX Levels indicator (TradingView, free)<br>
+      Companion reading: Harris — Trading and Exchanges
+    </div>
+    <div class="cover-meta">NQ Options Reference · 18 Chapters · Interactive Exam</div>
+  </div>
+
+  <hr class="section">
+  <h2>How to use this reference</h2>
+  <p>This document is structured as a self-contained reference, not a how-to guide for options trading. You will not trade options. You will use the <em>consequences</em> of other people's options positions to improve your reading of NQ futures price action during the London session.</p>
+  <p>Chapters 0–2 establish vocabulary and the core dealer-hedging mechanism. Chapters 3–7 build the option mechanics that explain <em>why</em> dealer behaviour takes the shape it does. Chapters 8–12 cover the market structure tools: GEX, VIX, walls, and the histogram. Chapters 13–16 are the London-specific application layer. Chapters 17–18 cover tools and conversion. The glossary and interactive section close the reference.</p>
+  <div class="warning-box">
+    <p><strong>Scope note.</strong> The concepts in this reference operate on a daily and weekly timeframe. They provide <em>context</em> for your London session — not entry triggers. Triggers remain your existing volume profile, VWAP, and order flow playbooks.</p>
+  </div>
+</div>
+
+<!-- ═══ CH 0 ═══ -->
+<div class="page" id="ch0">
+  <div class="chapter-num">Chapter 0</div>
+  <h1>Abbreviations &amp; What Is an Option?</h1>
+  <p class="chapter-intro">All jargon defined before it appears — read this chapter first.</p>
+
+  <h2>Market identifiers</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Abbreviation</th><th>Meaning</th><th>Why it matters here</th></tr></thead>
+    <tbody>
+      <tr><td>NQ</td><td>NASDAQ 100 Futures</td><td>The contract you trade. 1 point = $20/contract. Tracks Apple, Microsoft, Nvidia and 97 others. Trades 23 hours/day with leverage.</td></tr>
+      <tr><td>SPX</td><td>S&amp;P 500 Index</td><td>500 largest US companies. "The market" on the news. SPX options = world's largest options market = primary driver of all GEX flows.</td></tr>
+      <tr><td>QQQ</td><td>Invesco QQQ ETF</td><td>A share tracking the NASDAQ 100. QQQ ≈ NDX ÷ 40. Large institutions hedge their tech exposure using QQQ options. That hedging flows into NQ futures.</td></tr>
+      <tr><td>NDX</td><td>NASDAQ 100 Cash Index</td><td>Spot price of the NASDAQ 100 without futures premium. NDX ≈ NQ. QQQ = NDX ÷ 40.</td></tr>
+      <tr><td>VIX</td><td>Volatility Index (Fear Index)</td><td>Expected SPX volatility over 30 days. Calculated by CBOE from live option prices. VIX ÷ 16 ≈ expected daily % move.</td></tr>
+      <tr><td>CBOE</td><td>Chicago Board Options Exchange</td><td>World's largest options exchange. Calculates and publishes VIX continuously.</td></tr>
+      <tr><td>GEX</td><td>Gamma Exposure</td><td>Net total of all dealer gamma hedging combined into one number. Positive = dampens moves. Negative = amplifies moves. Chapter 9.</td></tr>
+      <tr><td>0DTE</td><td>Zero Days To Expiration</td><td>Options expiring today. Extreme gamma. Peak activity during NY RTH (15:30+ CET). Not relevant for London session planning.</td></tr>
+      <tr><td>5DTE</td><td>Five Days To Expiration</td><td>Weekly options. Stable structure all week. The TLADe indicator's default data source. Your primary GEX tool for London.</td></tr>
+      <tr><td>IV / Implied Vol</td><td>Implied Volatility</td><td>The market's expectation of future movement embedded in option prices. High IV = expensive options. VIX is a measure of IV for SPX. Chapter 3.</td></tr>
+      <tr><td>Theta (θ)</td><td>Time Decay</td><td>The daily erosion of an option's value as expiry approaches. Accelerates near expiry. Chapter 3.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>What is an option?</h2>
+  <p>An option is a contract giving the buyer the <em>right</em> — but not the obligation — to buy or sell something at a specific price before a specific date. The buyer pays a fee called the <strong>premium</strong>. The buyer's maximum possible loss is the premium paid.</p>
+
+  <div class="callout">
+    <div class="callout-title">Analogy — house insurance</div>
+    <p>You own a house worth €500,000. You buy insurance for €2,000 per year. The insurance gives you the right to sell your house for €500,000 even if it burns down and is worth only €50,000. You bought the <em>right</em> — not the obligation. Nothing happens → insurance expires worthless, you lost €2,000. Disaster strikes → your €2,000 policy is worth €450,000. A put option is exactly this: insurance on a stock or index.</p>
+  </div>
+
+  <div class="table-wrap"><table>
+    <thead><tr><th>Option type</th><th>Right to…</th><th>Profitable when…</th><th>Dealers who sold it must…</th></tr></thead>
+    <tbody>
+      <tr><td>Call option</td><td>Buy at strike price</td><td>Market rises above strike</td><td>Sell NQ futures as price rises toward strike → Call Wall resistance</td></tr>
+      <tr><td>Put option</td><td>Sell at strike price</td><td>Market falls below strike</td><td>Buy NQ futures as price falls toward strike → Put Wall support</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Key terms</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Term</th><th>Definition</th></tr></thead>
+    <tbody>
+      <tr><td>Strike price</td><td>The specific price level the option targets (e.g. NQ 21,000). Options cluster at round numbers. High open interest at a strike = gamma wall on your chart.</td></tr>
+      <tr><td>Expiry date</td><td>The date the option runs out. After this it is worthless if unused. 0DTE = expires today. 5DTE = expires in five days.</td></tr>
+      <tr><td>Premium</td><td>The fee paid to buy an option. The buyer's maximum possible loss. Higher VIX = higher premiums.</td></tr>
+      <tr><td>ITM (In The Money)</td><td>Option has intrinsic value right now. A call at 21,000 is ITM when NQ is above 21,000.</td></tr>
+      <tr><td>OTM (Out of The Money)</td><td>Option has only potential value. A call at 21,000 is OTM when NQ is below 21,000.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="key-point">You are not learning to trade options. You are learning how other people's options positions affect the behaviour of NQ futures on your chart.</div>
+</div>
+
+<!-- ═══ CH 1 ═══ -->
+<div class="page" id="ch1">
+  <div class="chapter-num">Chapter 1</div>
+  <h1>Why Futures Traders Care About Options</h1>
+  <p class="chapter-intro">The options market and the futures market are not separate — they share the same underlying, and hedging in one drives flow in the other.</p>
+
+  <p>Every day, thousands of options contracts are traded on SPX and QQQ — the same indices NQ tracks. The institutions who sold those options, called dealers, must continuously trade NQ futures to protect themselves. Their hedging is mechanical, predictable, and directly affects price action on your chart whether you know it or not.</p>
+
+  <div class="critical-box">
+    <div class="critical-title">Central premise</div>
+    <p>You do not need to trade options. You need to understand how options positioning creates predictable dealer hedging flow in the NQ futures market — flow that shapes session volatility character, creates support and resistance zones, and amplifies or dampens moves beyond what order flow and auction theory alone would predict.</p>
+  </div>
+
+  <h2>Why SPX and QQQ options affect NQ futures specifically</h2>
+  <p>SPX, QQQ and NQ track the same US technology-heavy market and move together almost tick-for-tick during liquid hours. When large institutions hedge their SPX or QQQ options positions, they do so using NQ futures as the hedging vehicle — the most liquid, nearly 24-hour instrument available. On active days, this dealer hedging accounts for billions of dollars of NQ futures flow. That is structural force, not noise.</p>
+
+  <h2>What knowing this gives you</h2>
+  <p>A two-minute pre-session check tells you whether today is likely to be a <em>grinding, mean-reverting day</em> where fade setups outperform, or an <em>explosive trending day</em> where breakout and trend-follow setups outperform. One upstream context layer. No options trading required.</p>
+</div>
+
+<!-- ═══ CH 2 ═══ -->
+<div class="page" id="ch2">
+  <div class="chapter-num">Chapter 2</div>
+  <h1>The Casino: How Dealers Work</h1>
+  <p class="chapter-intro">The casino analogy, decoded precisely.</p>
+
+  <div class="callout">
+    <div class="callout-title">The bet</div>
+    <p>You approach a casino and say: "I will pay you $50. If NQ rises 100 points today, you pay me." The casino takes your bet — but it does not gamble. It immediately buys NQ futures to cover its risk. As NQ moves during the session, the casino continuously adjusts that futures position. It does not care which direction NQ goes. It earns your $50 fee.</p>
+  </div>
+
+  <h2>Step 1 — Your bet creates directional exposure</h2>
+  <p>The casino now owes you money if NQ rises. In trading terms: it is effectively short NQ. To offset this, it immediately buys NQ futures. If NQ rises, its futures profit covers your payout. If NQ falls, it keeps your $50 and its futures loss is contained.</p>
+
+  <h2>Step 2 — A one-time hedge is insufficient</h2>
+  <p>Your bet's payout is not linear — it curves as NQ moves. Below +100 points the casino owes nothing; above +100 points the payout accelerates non-linearly. This means the casino's exposure (its delta) changes continuously as NQ moves. A static, one-time futures position does not remain accurate. It must adjust continuously.</p>
+
+  <h2>Step 3 — Dynamic hedging</h2>
+  <p>Because delta changes continuously, the casino must rebalance its futures position continuously. This is called dynamic hedging or delta hedging:</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>NQ direction</th><th>Effect on casino's liability</th><th>Casino's forced action</th><th>Market effect</th></tr></thead>
+    <tbody>
+      <tr><td>NQ rises</td><td>Liability grows faster than linear hedge covers</td><td>Must buy more NQ futures</td><td>Adds buying pressure</td></tr>
+      <tr><td>NQ falls</td><td>Liability shrinks; over-hedged</td><td>Must sell NQ futures back</td><td>Adds selling pressure</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Step 4 — How the casino profits</h2>
+  <p>The casino profits from edge, not direction. The premium you paid is priced so the expected payout is less than the fee. It also earns bid-ask spread across many bettors and a volatility edge if markets move less than priced in.</p>
+
+  <div class="critical-box">
+    <div class="critical-title">Core conclusion</div>
+    <p>Dealers stay neutral by continuously rebalancing a futures hedge as NQ price moves. This rebalancing is mechanical — not based on any directional view. It is compelled by mathematics. The resulting futures flow is what you observe on your chart as support, resistance, acceleration, and pinning.</p>
+    <p>Whether this flow dampens or amplifies a move depends on whether the dealer is net long or short gamma — the subject of Chapter 9 (GEX).</p>
+  </div>
+</div>
+
+<!-- ═══ CH 3 ═══ -->
+<div class="page" id="ch3">
+  <div class="chapter-num">Chapter 3</div>
+  <h1>Why Does an Option's Price Change?</h1>
+  <p class="chapter-intro">Three drivers: underlying price, time, and market nervousness.</p>
+
+  <p>An option's premium changes because of three independent forces. Understanding each helps explain how dealers are forced to rebalance their hedges — and when.</p>
+
+  <h2>Driver 1 — Underlying price moves (Delta)</h2>
+  <p>When NQ rises toward the strike of a call option, that call becomes more valuable. When NQ falls away, it loses value. The rate at which option price changes per $1 move in NQ is called delta. Delta is the primary driver of dealer hedging flow and is covered in depth in Chapter 4.</p>
+
+  <h2>Driver 2 — Time passing (Theta / time decay)</h2>
+  <p>Every day that passes, an option loses a portion of its value — even if NQ does not move at all. This erosion is called theta or time decay. It accelerates as expiry approaches: an option with 30 days remaining loses little per day; an option with 3 days remaining loses a great deal per day.</p>
+
+  <div class="callout">
+    <div class="callout-title">Analogy — lottery ticket</div>
+    <p>A lottery ticket bought on Monday for Friday's draw is worth something — four days of possibilities remain. By Thursday evening with hours left, the ticket holds almost nothing beyond its pure numerical value. Time is consuming its potential. An option is identical. A 5DTE option has five days of possibility priced into it. By the morning it expires (0DTE), only hours of possibility remain. This is why 0DTE options have almost no time value — only raw price sensitivity — and why their gamma is so extreme.</p>
+  </div>
+
+  <h2>Driver 3 — Market nervousness (Implied Volatility)</h2>
+  <p>Even if NQ price does not move and time does not pass, an option can change in value because of implied volatility (IV) — the market's expectation of future movement, embedded in option prices. When fear rises and participants buy put protection, option prices rise even if NQ is unchanged. This is IV expansion. VIX is a real-time measure of this.</p>
+  <p>When fear subsides and participants stop buying protection, option prices fall even if NQ is unchanged. This is IV contraction.</p>
+
+  <div class="callout">
+    <div class="callout-title">Analogy — insurance in a conflict zone</div>
+    <p>Your home insurance is cheap in a quiet neighbourhood. If fighting breaks out in an adjacent area, insurance companies raise prices everywhere immediately — not because anything has happened to your house, but because the risk environment has changed. Implied volatility is exactly this. When VIX spikes, option prices rise across all strikes because the market environment has become more dangerous, regardless of whether NQ has moved yet.</p>
+  </div>
+
+  <h2>Vol crush</h2>
+  <p>Vol crush occurs when implied volatility drops sharply after a known event resolves — an earnings release, a Federal Reserve decision, a macro shock that clears. Options that were expensive going into the event collapse in price, often even if NQ moved in the "right" direction.</p>
+  <div class="note-box">
+    <p><strong>For NQ futures traders:</strong> vol crush causes vanna flows (Chapter 7) to reverse rapidly as dealers must rebalance. A sharp VIX drop — even in a downtrend — can trigger explosive bear market rallies. The violence of such moves is explained by the mechanical reversal of forced dealer selling becoming forced dealer buying.</p>
+  </div>
+</div>
+
+<!-- ═══ CH 4 ═══ -->
+<div class="page" id="ch4">
+  <div class="chapter-num">Chapter 4</div>
+  <h1>What Is Delta? Three Ways to Read It</h1>
+  <p class="chapter-intro">The same number — read as price sensitivity, probability, and hedge ratio.</p>
+
+  <p>Delta is the single most important number linking the options market to NQ futures. It ranges from 0.00 to 1.00 for calls and 0.00 to −1.00 for puts. Depending on context, it can be read three distinct ways.</p>
+
+  <h2>Reading 1 — Price sensitivity</h2>
+  <p>Delta tells you how much the option's price changes when NQ moves one point. A call with delta 0.50 gains $0.50 in value for every $1 NQ rises. A call with delta 0.20 gains only $0.20. Higher delta = option moves more in lockstep with NQ.</p>
+
+  <h2>Reading 2 — Probability proxy</h2>
+  <p>Delta approximates the probability that the option expires in the money. A 0.50 delta call has roughly a 50% chance of being in the money at expiry. A 0.10 delta call has roughly a 10% chance. Deep OTM (low delta) options are cheap because they represent long shots.</p>
+
+  <h2>Reading 3 — Hedge ratio (most important for you)</h2>
+  <p>Delta tells a dealer how many NQ futures contracts to hold per option contract sold. If a dealer sold 1,000 contracts of a 0.50 delta call, they must hold the equivalent of 500 NQ futures contracts. This is the direct mechanical link between options positioning and NQ futures flow.</p>
+
+  <h2>Delta table by moneyness</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Option position</th><th>Delta range</th><th>Probability ITM</th><th>Dealer hedge size</th><th>Gamma level</th></tr></thead>
+    <tbody>
+      <tr><td>Deep OTM</td><td>0.05 – 0.15</td><td>~5–15%</td><td>Very small</td><td>Low</td></tr>
+      <tr><td>OTM</td><td>0.20 – 0.40</td><td>~20–40%</td><td>Moderate</td><td>Rising</td></tr>
+      <tr class="delta-highlight"><td><strong>ATM (near strike)</strong></td><td><strong>0.45 – 0.55</strong></td><td><strong>~50%</strong></td><td><strong>Half position</strong></td><td><strong>Highest</strong></td></tr>
+      <tr><td>ITM</td><td>0.60 – 0.80</td><td>~60–80%</td><td>Large</td><td>Falling</td></tr>
+      <tr><td>Deep ITM</td><td>0.85 – 1.00</td><td>~85–100%</td><td>Almost full</td><td>Very low</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Why ATM delta (~0.50) is most dangerous for dealers</h2>
+  <p>When an option is at-the-money — when NQ price is exactly at the strike — gamma is at its highest. Gamma is the rate of change of delta. High gamma means delta is changing rapidly with every NQ tick, which means dealers must rebalance their hedge most aggressively for every small price move.</p>
+  <p>Deep ITM options (delta near 1.00) change little in delta — the dealer already holds near-full exposure and small moves require minimal adjustment. Deep OTM options (delta near 0.00) also require little adjustment. It is ATM options — at the strike — where every tick forces substantial dealer trading. This is the mechanical origin of Call Walls and Put Walls.</p>
+
+  <div class="evidence-box grounded">
+    <div class="badge-grounded">Key principle</div>
+    <p>The largest dealer hedging flows occur at and near major strikes because that is where ATM delta, and therefore gamma, is highest. This creates observable support and resistance zones on your NQ chart — not from order book limits, but from mathematical compulsion.</p>
+  </div>
+</div>
+
+<!-- ═══ CH 5 ═══ -->
+<div class="page" id="ch5">
+  <div class="chapter-num">Chapter 5</div>
+  <h1>The Dealer Hedging Story</h1>
+  <p class="chapter-intro">Why a static hedge fails, and why continuous rebalancing creates the flows you observe.</p>
+
+  <h2>The dealer's problem: curved obligation, linear hedge</h2>
+  <p>When a dealer sells an option, they acquire a curved obligation — the option's payoff grows non-linearly as NQ moves past the strike. But a futures contract is a linear instrument: it gains or loses at a constant rate regardless of how far price moves. This mismatch between a curved obligation and a linear hedge is the origin of all dealer flow.</p>
+
+  <div class="code-block">
+<span class="cm">// Curved obligation vs. linear hedge — simplified</span>
+
+NQ →  20800   20900   21000   21100   21200   21300
+
+<span class="hi">DEALER'S OBLIGATION (option payoff — curves upward past strike):</span>
+                                <span class="rd">     ╭────────────────</span>
+                           <span class="rd">╭────╯</span>
+               <span class="rd">    ╭────╯</span>
+   <span class="rd">────────────╯</span>
+<span class="cm">   (below strike: owes nothing)    (above strike: payout accelerates)</span>
+
+<span class="hi">DEALER'S FUTURES HEDGE (straight line — one fixed-size position):</span>
+<span class="gr">   ──────────────────────────────────────────────────────────────</span>
+
+<span class="cm">// At NQ 21000, the lines cross. As NQ rises to 21200, the curved
+// obligation exceeds the linear hedge → dealer must BUY more futures.
+// As NQ falls to 20900, the linear hedge exceeds the obligation
+// → dealer is over-hedged → must SELL futures back.</span>
+  </div>
+
+  <h2>Why dynamic hedging is the only solution</h2>
+  <p>Because the option's payoff curve continuously changes shape as NQ moves, a one-time hedge becomes inaccurate the instant price moves. The dealer must rebalance the futures position continuously to keep it tracking the curve. The frequency and size of each rebalancing trade is determined by gamma — the higher the gamma, the faster the curve changes, the more frequently the dealer must trade.</p>
+
+  <h2>The mechanical feedback</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>NQ moves…</th><th>Dealer obligation curve…</th><th>Dealer must…</th><th>Effect on NQ</th></tr></thead>
+    <tbody>
+      <tr><td>Up</td><td>Rises faster than linear hedge</td><td>Buy NQ futures to close the gap</td><td>Adds upward pressure</td></tr>
+      <tr><td>Down</td><td>Falls faster than linear hedge</td><td>Sell NQ futures (over-hedged)</td><td>Adds downward pressure</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="critical-box">
+    <div class="critical-title">The forced nature of this flow</div>
+    <p>Dealers do not choose to buy or sell NQ based on a directional view. They are compelled to trade by mathematics — the mismatch between the shape of their option obligation and the shape of their hedge. This forced, mechanical trading is what appears on your chart as walls, pinning, and momentum acceleration.</p>
+  </div>
+</div>
+
+<!-- ═══ CH 6 ═══ -->
+<div class="page" id="ch6">
+  <div class="chapter-num">Chapter 6</div>
+  <h1>Price Acceleration: The Turbocharger</h1>
+  <p class="chapter-intro">Dealers do not initiate directional moves — they amplify or dampen them.</p>
+
+  <h2>Dealers as participants in momentum, not as initiators</h2>
+  <p>A directional move in NQ begins from some other cause: an order flow imbalance, a news event, a large institutional participant taking a position. Once the move begins, dealer hedging can dramatically amplify or reduce it. They are the turbocharger or the shock absorber — not the engine.</p>
+
+  <h2>The feedback loop in negative GEX (amplifying)</h2>
+  <p>When GEX is negative — dealers are short gamma — the following loop operates:</p>
+  <ol style="padding-left:22px;margin-bottom:1rem;line-height:1.95;font-size:0.97rem">
+    <li>NQ begins to rally for any reason</li>
+    <li>Dealers' delta rises → they must buy NQ futures to rebalance</li>
+    <li>That buying adds upward pressure to NQ</li>
+    <li>NQ rises further → dealers' delta rises again → they must buy more</li>
+    <li>The loop continues until price reaches the next significant GEX level (a wall)</li>
+  </ol>
+  <p>The same loop operates in reverse on declines: NQ falls → dealers sell → more decline → dealers sell more → accelerates downward.</p>
+
+  <div class="callout">
+    <div class="callout-title">Analogy — the casino always rides momentum</div>
+    <p>In a normal casino, the house wins by having a mathematical edge over the player. In the options market, dealers win differently: by always being on both sides of momentum. When GEX is negative, the dealer buys into rallies and sells into declines — always with the prevailing direction, never against it. They do not need to predict which way NQ goes. Once a direction is established, dealer flow amplifies it mechanically until the next wall level stops it.</p>
+  </div>
+
+  <h2>The damping loop in positive GEX</h2>
+  <p>When GEX is positive — dealers are long gamma — the feedback loop reverses:</p>
+  <ul style="padding-left:22px;margin-bottom:1rem;line-height:1.95;font-size:0.97rem">
+    <li>NQ rises → dealers' delta rises → they must <strong>sell</strong> NQ futures → selling dampens the rally → NQ oscillates back</li>
+    <li>NQ falls → dealers' delta falls → they must <strong>buy</strong> NQ futures → buying catches the decline → NQ bounces back</li>
+  </ul>
+
+  <div class="critical-box">
+    <div class="critical-title">The two regime states</div>
+    <p><strong>Positive GEX:</strong> dealers are shock absorbers. Every move away from equilibrium triggers a dealer trade in the opposite direction. Price oscillates. Fades work.</p>
+    <p><strong>Negative GEX:</strong> dealers are turbochargers. Every move in any direction triggers a dealer trade in the same direction. Trends extend. Breakouts follow through. Do not fade strong moves.</p>
+  </div>
+</div>
+
+<!-- ═══ CH 7 ═══ -->
+<div class="page" id="ch7">
+  <div class="chapter-num">Chapter 7</div>
+  <h1>Delta, Gamma &amp; Vanna</h1>
+  <p class="chapter-intro">The three Greek names relevant to NQ futures traders — summarised.</p>
+
+  <div class="table-wrap"><table>
+    <thead><tr><th>Greek</th><th>What it measures</th><th>When it forces dealer action</th><th>Why it matters for NQ</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Delta (Δ)</strong></td><td>Rate of change of option price per $1 NQ move. The hedge ratio.</td><td>Every time NQ price changes</td><td>Continuously forces NQ futures buying or selling to maintain delta neutrality</td></tr>
+      <tr><td><strong>Gamma (Γ)</strong></td><td>Rate of change of delta per NQ point. Highest when ATM.</td><td>Highest at strike price (ATM)</td><td>Creates walls, pinning, price magnetism at major strikes</td></tr>
+      <tr><td><strong>Vanna (V)</strong></td><td>Rate of change of delta per unit change in implied volatility (VIX)</td><td>When VIX spikes or collapses</td><td>Forces NQ selling when VIX rises (amplifying selloffs); reverses on VIX collapse (violent bear rallies)</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout">
+    <div class="callout-title">Analogy — gamma</div>
+    <p>Imagine carrying a ball that becomes heavier the closer you get to a wall. Near the wall — near a strike price — every small step forces you to drop more weight to stay balanced. Far from the wall, large steps barely change the load. Gamma is the same: the closer NQ is to a major strike, the more dealer re-hedging occurs per point of price movement.</p>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">Analogy — vanna</div>
+    <p>Imagine your hedging requirements change not because you moved, but because the room temperature changed. Standing completely still, you must adjust your balance because the environment shifted. Vanna operates this way: a VIX spike forces dealer rebalancing in NQ even when NQ price has not moved significantly yet. This is why a fear spike can trigger NQ selling before price has broken any structural level — the environment changed, and dealers had no choice but to act.</p>
+  </div>
+
+  <h2>The vanna feedback on selloffs</h2>
+  <p>During a selloff: NQ falls → fear rises → VIX spikes → vanna forces dealers to sell additional NQ → price falls further → VIX rises more → more forced selling. This self-reinforcing loop is what drives crash dynamics and explains why selloffs accelerate at a rate beyond what gamma alone would produce.</p>
+  <p>The loop terminates when VIX reaches a level where it can only go lower. At that point, vanna reverses sign and forces aggressive dealer buying — the source of violent bear market rallies that appear to come from nowhere.</p>
+</div>
+
+<!-- ═══ CH 8 ═══ -->
+<div class="page" id="ch8">
+  <div class="chapter-num">Chapter 8</div>
+  <h1>0DTE vs 5DTE: Grenade vs Brick Wall</h1>
+  <p class="chapter-intro">Two types of options with fundamentally different structural properties.</p>
+
+  <div class="table-wrap"><table>
+    <thead><tr><th>Feature</th><th>0DTE (Zero Days)</th><th>5DTE (Five Days)</th></tr></thead>
+    <tbody>
+      <tr><td>Expiry</td><td>Today — expires at close</td><td>End of current week (Friday)</td></tr>
+      <tr><td>Time value</td><td>Almost none</td><td>Meaningful — five days priced in</td></tr>
+      <tr><td>Gamma level</td><td>Extreme — at maximum</td><td>Significant but not extreme</td></tr>
+      <tr><td>Delta behaviour</td><td>Moves nearly 1:1 with NQ</td><td>Graded by moneyness</td></tr>
+      <tr><td>Wall durability</td><td>One session only — resets daily</td><td>Stable all week</td></tr>
+      <tr><td>Active hours (CET)</td><td>Peaks 15:30 – 21:00</td><td>All session, including London open</td></tr>
+      <tr><td>Vol crush effect</td><td>Catastrophic — no time value buffer</td><td>Manageable — time value absorbs</td></tr>
+      <tr><td>TLADe indicator</td><td>Coming (invite-only)</td><td>Pre-loaded weekly data — works now</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout">
+    <div class="callout-title">Analogy — grenade vs brick wall</div>
+    <p>A 5DTE option is a grenade with the pin still in: enormous potential energy, stable in your hand, usable for planning. The walls it creates are solid and predictable — brick walls that hold all week. A 0DTE option is a grenade with the pin already pulled: fully live energy, detonates at any movement. The walls it creates exist only for one trading session — sandcastles that disappear at the daily close.</p>
+  </div>
+
+  <h2>Why 0DTE volume exploded</h2>
+  <p>Before 2022, SPX options had three expirations per week. The CBOE added daily Monday-through-Friday expirations in 2022. Retail and institutional traders discovered that 0DTE options were inexpensive to buy and could multiply in value within hours. Volume exploded; by 2023, 0DTE options exceeded 50% of all SPX options volume on active days. This created the extreme intraday gamma dynamics now felt in NQ each US afternoon session.</p>
+
+  <h2>Call and Put walls: 0DTE vs 5DTE</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Wall type</th><th>0DTE version</th><th>5DTE version</th><th>When both align</th></tr></thead>
+    <tbody>
+      <tr><td>Call Wall</td><td>Forms at NY open; strongest 10:00–15:00 ET; erases at close</td><td>Set Sunday night; stable Monday–Friday; predictable for London</td><td>Double gamma concentration — highest-conviction fade level of the week</td></tr>
+      <tr><td>Put Wall</td><td>Same daily reset; absorbs any bounce attempt during NY RTH</td><td>Stable floor for the week; London price action occurs above or below it</td><td>If both at same strike — treat as near-impenetrable. A break through both is a rare, high-conviction signal.</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- ═══ CH 9 ═══ -->
+<div class="page" id="ch9">
+  <div class="chapter-num">Chapter 9</div>
+  <h1>GEX: The Session Dial</h1>
+  <p class="chapter-intro">Gamma Exposure in one number — what type of day is today?</p>
+
+  <p>GEX (Gamma Exposure) is the net result of every dealer's gamma hedging combined into a single number. Positive GEX means dealers are net long gamma — they act as shock absorbers. Negative GEX means dealers are net short gamma — they act as turbochargers. Near zero means no systematic dealer interference.</p>
+
+  <div class="gex-dial">
+    <div class="gex-col neg">
+      <div class="gex-col-label">Negative GEX</div>
+      <ul>
+        <li>Turbocharger mode</li>
+        <li>Trends extend</li>
+        <li>Breakouts follow through</li>
+        <li>Do not fade strong moves</li>
+        <li>Trend playbooks</li>
+      </ul>
+    </div>
+    <div class="gex-col neu">
+      <div class="gex-col-label">Near Zero</div>
+      <ul>
+        <li>No dealer interference</li>
+        <li>Pure price discovery</li>
+        <li>Auction theory dominant</li>
+        <li>Read the open carefully</li>
+        <li>Both setups possible</li>
+      </ul>
+    </div>
+    <div class="gex-col pos">
+      <div class="gex-col-label">Positive GEX</div>
+      <ul>
+        <li>Shock absorber mode</li>
+        <li>Fades work well</li>
+        <li>Mean-reversion dominates</li>
+        <li>False breaks are common</li>
+        <li>Fade playbooks</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="warning-box">
+    <p><strong>GEX predicts volatility character, not direction.</strong> Positive GEX does not mean NQ rises — it means NQ oscillates. Negative GEX does not mean NQ falls — it means whatever direction NQ picks, it travels further than structure alone would suggest.</p>
+  </div>
+
+  <h2>Research finding</h2>
+  <p>SqueezeMetrics research (2017) found that when GEX was at its highest positive levels, average daily SPX returns had a 1-day standard deviation of approximately 0.55%. When GEX turned negative, the same measure rose to 3–6% in extreme cases. The difference between a compression day and an expansion day is visible in the GEX reading before the session begins.</p>
+</div>
+
+<!-- ═══ CH 10 ═══ -->
+<div class="page" id="ch10">
+  <div class="chapter-num">Chapter 10</div>
+  <h1>VIX: How It Is Derived</h1>
+  <p class="chapter-intro">The fear index — what it measures, how it is calculated, and how to use it.</p>
+
+  <h2>Derivation</h2>
+  <p>The CBOE reads real-time bid-ask prices of hundreds of SPX call and put options with expirations between 23 and 37 days out. For each option, it calculates the implied volatility — the expected future volatility that would make the option's current price fair. It then weights all of these implied volatilities together and expresses the result as an annualised percentage.</p>
+  <p>Working rule: <strong>VIX ÷ 16 ≈ expected daily percentage move in SPX.</strong> VIX at 16 implies roughly ±1% per day. VIX at 32 implies roughly ±2% per day.</p>
+
+  <h2>What VIX is not</h2>
+  <p>VIX is not directional. It does not say whether NQ will rise or fall. It measures the expected <em>magnitude</em> of movement. It is also not a prediction — it measures what current option prices imply today. Option buyers and sellers may be systematically wrong about the future. But it is the best real-time measure of market fear and expected volatility available.</p>
+
+  <h2>Session bias by VIX level</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>VIX level</th><th>What it means</th><th>Session bias for London</th></tr></thead>
+    <tbody>
+      <tr><td>Below 15</td><td>Calm. Dealers long gamma. Large liquidity cushion.</td><td>Fade setups. VWAP mean-reversion. Balanced day character.</td></tr>
+      <tr><td>15 – 20</td><td>Normal. No strong bias.</td><td>Read the open carefully. Watch acceptance above or below VWAP.</td></tr>
+      <tr><td>20 – 30</td><td>Elevated. Dealers losing gamma cushion. Vanna beginning to matter.</td><td>Trend setups more likely. Do not over-fade strong moves.</td></tr>
+      <tr><td>Above 30</td><td>High fear. Vanna fully active. Amplification in effect.</td><td>Trend days. Moves extend. Breakouts accelerate. Wider context.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout">
+    <div class="callout-title">Direction matters as much as level</div>
+    <p>VIX rising from 16 to 22 is very different from VIX sitting at 22 and falling. Rising VIX activates vanna flows — moves likely to extend. Falling VIX reverses them — bear market rallies can be violent. Always note: is VIX higher or lower than yesterday's close?</p>
+  </div>
+</div>
+
+<!-- ═══ CH 11 ═══ -->
+<div class="page" id="ch11">
+  <div class="chapter-num">Chapter 11</div>
+  <h1>Put Wall, Call Wall, Zero Gamma, Max Pain</h1>
+  <p class="chapter-intro">Four levels that define the structural map of each session.</p>
+
+  <div class="table-wrap"><table>
+    <thead><tr><th>Level</th><th>Definition</th><th>Dealer behaviour near it</th><th>What to expect</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Call Wall</strong></td><td>Strike with highest call option open interest. Resistance ceiling.</td><td>Dealers short calls sell NQ futures as price rises toward strike</td><td>Momentum decelerates. Wicks above. High-conviction fade zone. If it breaks: dealers flip to buying, move accelerates.</td></tr>
+      <tr><td><strong>Put Wall</strong></td><td>Strike with highest put option open interest. Support floor.</td><td>Dealers short puts buy NQ futures as price falls toward strike</td><td>Declines decelerate. Wicks below. High-conviction long zone. If it breaks: gamma collapses, fast drop to secondary Put Wall.</td></tr>
+      <tr><td><strong>Zero Gamma</strong></td><td>Price where aggregate dealer gamma crosses from positive to negative. The regime switch.</td><td>Dealers transition from dampening to amplifying as price crosses this level</td><td>Crossing Zero Gamma is the most important intraday regime signal. Stop fading after the crossing — switch to trend-follow.</td></tr>
+      <tr><td><strong>Max Pain</strong></td><td>Strike where all outstanding options collectively lose maximum total value at expiration — where options sellers profit most.</td><td>Overall hedging flows gravitate price toward this strike as contracts expire and lose gamma</td><td>Price drifts toward Max Pain especially in the final hour of Friday expiry. Reduce position confidence near this level on Fridays.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Expected Move bands</h2>
+  <p>The TLADe indicator also displays Expected Move High (EH) and Expected Move Low (EL) — statistical range bands derived from option pricing, representing approximately ±1 standard deviation of expected NQ movement for the week. Moves outside these bands are unusual and often involve vanna-driven cascade dynamics. They function as outer boundaries of normal weekly behaviour.</p>
+</div>
+
+<!-- ═══ CH 12 ═══ -->
+<div class="page" id="ch12">
+  <div class="chapter-num">Chapter 12</div>
+  <h1>The GEX Histogram: The Full Map</h1>
+  <p class="chapter-intro">Not just where the walls are — how strong they are.</p>
+
+  <p>The GEX indicator displays not just the location of key levels but the magnitude of gamma at every strike, rendered as a horizontal bar chart directly on your NQ chart. Bar length encodes the strength of dealer hedging pressure at each price level.</p>
+
+  <h2>Reading the histogram</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Bar length</th><th>What it means</th><th>Implication for trading</th></tr></thead>
+    <tbody>
+      <tr><td>Tall / long bar</td><td>Strong dealer gamma concentration at this strike</td><td>Expect significant support or resistance. High-conviction fade on approach. Don't expect price to pass through easily.</td></tr>
+      <tr><td>Short / small bar</td><td>Weak dealer gamma at this strike</td><td>Thin resistance or support — price passes through with little structural pushback. Don't treat as a significant level.</td></tr>
+      <tr><td>No bar (gap)</td><td>Air pocket — no dealer gamma at all in this zone</td><td>Price moves quickly in either direction here. No mechanical cushion. Best momentum entry zone after a wall breaks — ride to the next bar.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="histogram-section">
+    <div style="font-family:-apple-system,sans-serif;font-size:10.5px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">Example GEX Profile</div>
+    <div class="hist-row"><div class="hist-lbl" style="color:var(--win)">21200</div><div class="hist-bar-wrap"><div class="hist-bar" style="width:78%;background:rgba(27,106,64,0.55);"></div><div class="hist-note" style="color:var(--win)">Call Wall — very strong</div></div></div>
+    <div class="hist-row"><div class="hist-lbl">21150</div><div class="hist-bar-wrap"><div class="hist-bar" style="width:10%;background:rgba(27,106,64,0.2);"></div><div class="hist-note">weak — passes through easily</div></div></div>
+    <div class="hist-row"><div class="hist-lbl" style="color:var(--gold)">21100</div><div class="hist-bar-wrap"><div class="hist-bar" style="width:35%;background:rgba(154,123,32,0.35);"></div><div class="hist-note" style="color:var(--gold)">secondary call level</div></div></div>
+    <div class="hist-row"><div class="hist-lbl" style="color:var(--gold);font-weight:bold">21050 ▶</div><div class="hist-bar-wrap"><div class="hist-note" style="color:var(--gold)">current price</div></div></div>
+    <div class="hist-row"><div class="hist-lbl">21000</div><div class="hist-bar-wrap"><div class="hist-bar" style="width:30%;background:rgba(154,123,32,0.3);"></div><div class="hist-note">Zero Gamma level</div></div></div>
+    <div class="hist-row"><div class="hist-lbl">20950</div><div class="hist-bar-wrap"><div class="hist-note" style="color:var(--text-muted);font-style:italic">— air pocket —</div></div></div>
+    <div class="hist-row"><div class="hist-lbl">20900</div><div class="hist-bar-wrap"><div class="hist-note" style="color:var(--text-muted);font-style:italic">— air pocket —</div></div></div>
+    <div class="hist-row"><div class="hist-lbl" style="color:var(--loss)">20800</div><div class="hist-bar-wrap"><div class="hist-bar" style="width:88%;background:rgba(138,32,32,0.55);"></div><div class="hist-note" style="color:var(--loss)">Put Wall (primary) — very strong</div></div></div>
+    <div class="hist-row"><div class="hist-lbl" style="color:var(--loss);opacity:0.6">20600</div><div class="hist-bar-wrap"><div class="hist-bar" style="width:46%;background:rgba(138,32,32,0.3);"></div><div class="hist-note" style="color:var(--loss);opacity:0.7">Secondary Put Wall — target if primary breaks</div></div></div>
+  </div>
+
+  <h2>Walls beyond the primary range</h2>
+  <p>The space between Put Wall and Call Wall is the expected range for the session. When that range holds, price oscillates between the two levels. When it breaks, the <em>next</em> wall in the histogram becomes your target.</p>
+  <div class="evidence-box grounded">
+    <div class="badge-grounded">Trading application</div>
+    <p>If the Put Wall (20,800) breaks: the air pocket between 20,900 and 20,800 has no dealer cushion — price falls quickly. The secondary Put Wall (20,600) is your target and your next support reference. The distance between Put Wall and Secondary Put Wall defines how far a breakdown move is likely to travel before encountering new mechanical buying.</p>
+    <p>If the Call Wall (21,200) breaks: the air pocket above has no dealer selling. The secondary Call Wall above becomes your target. A break with follow-through through an air pocket is a high-conviction continuation — do not fade it.</p>
+  </div>
+</div>
+
+<!-- ═══ CH 13 ═══ -->
+<div class="page" id="ch13">
+  <div class="chapter-num">Chapter 13</div>
+  <h1>For London Traders: Why 0DTE Doesn't Matter</h1>
+  <p class="chapter-intro">Time zone analysis: when do 0DTE options actually become active?</p>
+
+  <h2>The time zone reality</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Time (CET)</th><th>Time (ET)</th><th>Market state</th><th>0DTE activity</th></tr></thead>
+    <tbody>
+      <tr><td>08:00 – 10:00</td><td>02:00 – 04:00</td><td>London Open session</td><td>Minimal — US market closed</td></tr>
+      <tr><td>10:00 – 12:00</td><td>04:00 – 06:00</td><td>London Mid session</td><td>Minimal — US market closed</td></tr>
+      <tr><td>15:30 – 22:00</td><td>09:30 – 16:00</td><td>US RTH</td><td>Peak 0DTE activity</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>0DTE options are built for and activated by the US Regular Trading Hours session. During your London open, US cash markets have not yet opened. 0DTE walls either do not yet exist (today's options haven't formed structure) or carry minimal gamma (yesterday's leftovers). In either case, they are not actionable for London session planning.</p>
+
+  <h2>Why 5DTE walls are the correct tool for London</h2>
+  <p>Weekly (5DTE) options are opened Sunday evening or Monday's early session. By the time London opens on Monday, 5DTE walls are fully established. By Wednesday, they are at their most predictable — maximum time has been spent at each strike level, and open interest is at its peak concentration. London session price action occurs <em>within the structural framework set by 5DTE walls</em>.</p>
+
+  <div class="table-wrap"><table>
+    <thead><tr><th>Factor</th><th>0DTE for London session</th><th>5DTE for London session</th></tr></thead>
+    <tbody>
+      <tr><td>Active during 08:00–12:00 CET?</td><td>No — US market closed</td><td>Yes — stable all week</td></tr>
+      <tr><td>Walls predictable pre-session?</td><td>No — reset daily, unknown until NY open</td><td>Yes — known since Sunday night</td></tr>
+      <tr><td>Available in TLADe indicator?</td><td>Coming soon (invite-only)</td><td>Pre-loaded, works immediately</td></tr>
+      <tr><td>Cost-benefit for London</td><td>High complexity, negligible benefit</td><td>Low complexity, high structural value</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="critical-box">
+    <div class="critical-title">Conclusion for London session planning</div>
+    <p>Use 5DTE walls from the TLADe indicator for all pre-session planning. 0DTE becomes relevant only if you extend trading into the NY RTH session (after 15:30 CET). Do not add 0DTE complexity to your London preparation — the data is not yet formed when you need it.</p>
+  </div>
+</div>
+
+<!-- ═══ CH 14 ═══ -->
+<div class="page" id="ch14">
+  <div class="chapter-num">Chapter 14</div>
+  <h1>Pre-Session Checklist: 5DTE Walls</h1>
+  <p class="chapter-intro">Three questions before London open — then one line in Obsidian.</p>
+
+  <h2>The three questions</h2>
+  <ol style="padding-left:22px;margin-bottom:1.5rem;line-height:2;font-size:0.97rem">
+    <li><strong>Where is NQ price relative to the 5DTE walls?</strong> Is price inside the range (between Put Wall and Call Wall)? Is it pressing toward a wall? Did it break above or below overnight?</li>
+    <li><strong>What is VIX doing?</strong> Level (below 15 / 15–20 / 20–30 / 30+) and direction (rising or falling vs yesterday's close)?</li>
+    <li><strong>What is the overall GEX reading?</strong> Positive histogram = shock absorber day. Negative net GEX = amplifier day. Near zero = read the open carefully.</li>
+  </ol>
+
+  <h2>Integration into your context label</h2>
+  <p>Your existing context label format: <em>Regime + cue | Segment | Primary focus</em>. Add GEX context as an upstream layer before writing the label:</p>
+  <div class="playbook-block">
+    <div class="playbook-row"><div class="playbook-label">Obsidian line</div><div class="playbook-content">GEX: [pos/neutral/neg] | VIX: [level + rising/falling] | PW: [level] | CW: [level] | ZG: [level] | NQ vs walls: [inside / pressing / broken] | Bias: [fade / trend / wait]</div></div>
+    <div class="playbook-row"><div class="playbook-label">Example A</div><div class="playbook-content">GEX: pos | VIX: 13, falling | PW: 20800 | CW: 21200 | ZG: 21000 | NQ 21050, inside range | Bias: fade → context label: Balanced | Open | VWAP mean-reversion | GEX: shock absorber</div></div>
+    <div class="playbook-row"><div class="playbook-label">Example B</div><div class="playbook-content">GEX: neg | VIX: 26, rising from 19 | PW: 20800 (broken) | CW: 21200 | ZG: 21000 | NQ 20750, below PW | Bias: trend → context label: Trend | Open | Follow breakdown | Air pocket to 20600</div></div>
+  </div>
+
+  <h2>Behaviour at 5DTE wall positions</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>NQ position at open</th><th>Structural implication</th><th>Session bias</th></tr></thead>
+    <tbody>
+      <tr><td>Inside range (between PW and CW)</td><td>Dealers acting as shock absorbers from both sides. Normal rotation day expected.</td><td>VWAP mean-reversion and stop-run setups. Target walls as fade levels. Trust the structure.</td></tr>
+      <tr><td>Pressing Call Wall (from below)</td><td>Mechanical dealer selling building. High-probability fade zone.</td><td>Do not chase longs into the wall. Look for absorption or sweep+reclaim trigger to fade short toward VWAP or Put Wall.</td></tr>
+      <tr><td>Broken above Call Wall overnight</td><td>Dealers have flipped to buying (short calls now deep ITM, gamma collapses). Old CW becomes new support.</td><td>Trend bias. Do not fade the move. Look for pullback to old CW level as entry long. Target secondary Call Wall above.</td></tr>
+      <tr><td>Broken below Put Wall overnight</td><td>Mechanical floor gone. Fast move into air pocket territory.</td><td>Do not catch the falling market. Wait for acceptance below PW. Target secondary Put Wall. Negative GEX likely active.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="checklist">
+    <div class="checklist-title">Pre-session checklist</div>
+    <ul>
+      <li onclick="toggleCL(this)"><input type="checkbox"><span>Check VIX level and direction on any financial site (Yahoo Finance, CNBC)<span class="sub">Level bracket: &lt;15 / 15–20 / 20–30 / 30+. Rising or falling vs yesterday?</span></span></li>
+      <li onclick="toggleCL(this)"><input type="checkbox"><span>Read TLADe levels on NQ chart: Put Wall, Call Wall, Zero Gamma, Max Pain<span class="sub">These are already on your chart — just read them before the first candle.</span></span></li>
+      <li onclick="toggleCL(this)"><input type="checkbox"><span>Note where NQ is relative to the 5DTE walls<span class="sub">Inside range / pressing a wall / overnight break above or below?</span></span></li>
+      <li onclick="toggleCL(this)"><input type="checkbox"><span>Check GEX reading (Barchart QQQ page or TLADe histogram shape)<span class="sub">Positive = shock absorber. Negative = turbocharger. Near zero = read the open.</span></span></li>
+      <li onclick="toggleCL(this)"><input type="checkbox"><span>Write one line in Obsidian before the first candle<span class="sub">GEX | VIX | PW | CW | ZG | NQ position | Bias</span></span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══ CH 15 ═══ -->
+<div class="page" id="ch15">
+  <div class="chapter-num">Chapter 15</div>
+  <h1>What to Expect at Each Wall Type</h1>
+  <p class="chapter-intro">Dealer behaviour, market response, and what to watch for — by wall type.</p>
+
+  <div class="table-wrap"><table>
+    <thead><tr><th>Wall type / event</th><th>What dealers do</th><th>Market behaviour</th><th>What to watch for</th></tr></thead>
+    <tbody>
+      <tr><td><strong>5DTE Call Wall — approaching from below</strong></td><td>Intensify NQ futures selling as price nears strike</td><td>Momentum decelerates. Wicks form above. Oscillation around the level.</td><td>Absorption signature. Volume spike into resistance + delta divergence → fade short.</td></tr>
+      <tr><td><strong>5DTE Call Wall — sustained break above</strong></td><td>Flip to buying (ITM calls → dealer long delta). Mechanical buying above.</td><td>Move accelerates. False break risk low once 2–3 M15 candles close above.</td><td>Old Call Wall becomes new support on first pullback. Target secondary Call Wall above.</td></tr>
+      <tr><td><strong>5DTE Put Wall — approaching from above</strong></td><td>Intensify NQ futures buying as price falls toward strike</td><td>Decline decelerates. Wicks form below. Bounce attempts.</td><td>Buying absorption at the wall. Volume into support + CVD stabilising → fade long.</td></tr>
+      <tr><td><strong>5DTE Put Wall — sustained break below</strong></td><td>Puts go deep ITM, gamma collapses, mechanical buying fades</td><td>Fast drop into air pocket toward secondary Put Wall. No cushion.</td><td>Do not fade. Wait for acceptance below. Target secondary Put Wall.</td></tr>
+      <tr><td><strong>Zero Gamma — price crosses below</strong></td><td>Regime shifts from dampening to amplifying</td><td>Volatility expands. Oscillating moves become trending. False break risk increases.</td><td>Stop fading. Switch to trend-follow mode. Most important intraday regime signal.</td></tr>
+      <tr><td><strong>Max Pain — Friday afternoon</strong></td><td>Hedging flows gravitating toward Max Pain strike as contracts expire</td><td>Magnetic pull toward Max Pain. Moves fade back to the level.</td><td>Reduce position confidence on Friday afternoon. Expect drift toward Max Pain.</td></tr>
+      <tr><td><strong>Air pocket (histogram gap)</strong></td><td>Minimal hedging. No mechanical support or resistance.</td><td>Fast directional moves. Little pushback. Price travels quickly to next wall.</td><td>Best momentum entry zone after a wall breaks. Ride to next wall — do not look for reversals here.</td></tr>
+      <tr><td><strong>5DTE + 0DTE walls aligned at same strike</strong></td><td>Double gamma concentration from both weekly and daily positioning</td><td>Extremely strong wall. Very high probability of holding.</td><td>Highest-conviction fade level of the week. A break through both simultaneously is rare and violent — only on VIX spike + GEX negative combination.</td></tr>
+      <tr><td><strong>Post-expiry unwind (Friday after 15:00 CET)</strong></td><td>Expiring options lose gamma. Dealers release hedges.</td><td>5DTE walls lose their magnetism. Price may drift freely.</td><td>Do not rely on 5DTE walls after Friday 15:00 CET. New weekly walls reset Sunday night.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>The highest-probability confluence setup</h2>
+  <p>When a 5DTE wall aligns with a Volume Profile level (VAH, VAL, or POC) and a VWAP standard deviation band simultaneously, you have three independent structural signals at the same price: mechanical dealer flow (GEX), auction fairness reference (Volume Profile), and statistical deviation context (VWAP). This triple confluence is the strongest structural reference in the combined framework.</p>
+</div>
+
+<!-- ═══ CH 16 ═══ -->
+<div class="page" id="ch16">
+  <div class="chapter-num">Chapter 16</div>
+  <h1>Strategies Around the Walls</h1>
+  <p class="chapter-intro">Walls are context, not triggers. They define probability — your existing playbooks provide the entry.</p>
+
+  <div class="warning-box">
+    <p>GEX wall levels do not replace volume profile triggers, VWAP setups, or order flow signals. They tell you where dealer flows will be strongest, which affects whether your existing playbooks are high- or low-probability on a given day. The entry trigger remains your annotatable chart signal.</p>
+  </div>
+
+  <div class="table-wrap"><table>
+    <thead><tr><th>Scenario</th><th>GEX context</th><th>Playbook bias</th></tr></thead>
+    <tbody>
+      <tr><td>Price inside range (PW–CW), GEX positive, VIX low</td><td>Shock absorber regime. Both walls active.</td><td>Fade approaches to Call Wall. Fade drops toward Put Wall. Tight targets near VWAP. Stop-run setups at range extremes.</td></tr>
+      <tr><td>Price inside range, GEX near zero, VIX flat</td><td>No systematic dealer interference. Pure price discovery.</td><td>Read the initial balance. Wait for directional acceptance. Both fade and trend setups possible — confirm with volume.</td></tr>
+      <tr><td>Price broken above Call Wall, GEX negative, VIX falling</td><td>Dealer flip: from selling into strength to buying into pullbacks above old wall.</td><td>Trend-follow long. Old Call Wall = new support. Target secondary Call Wall. Do not fade the initial move.</td></tr>
+      <tr><td>Price broken below Put Wall, GEX negative, VIX rising</td><td>Floor gone. Vanna potentially active. Air pocket below.</td><td>Trend-follow short. Target secondary Put Wall. Wider stops — moves in air pockets are fast. Do not catch the falling market.</td></tr>
+      <tr><td>Price at Zero Gamma, oscillating</td><td>Balanced point — dealers neither dampening nor amplifying.</td><td>Wait for directional break with volume. Enter on acceptance above or below Zero Gamma. First clean M15 close with follow-through = entry signal.</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- ═══ CH 17 ═══ -->
+<div class="page" id="ch17">
+  <div class="chapter-num">Chapter 17</div>
+  <h1>QQQ → NQ Conversion</h1>
+  <p class="chapter-intro">The relationship between QQQ option levels and NQ futures price.</p>
+
+  <h2>The formula</h2>
+  <p>QQQ is designed to trade at approximately 1/40th of the NDX (NASDAQ 100 cash index). NDX and NQ futures trade very close to each other — typically within 10–40 points depending on the futures roll premium. For GEX level planning, treat NDX ≈ NQ.</p>
+
+  <div class="critical-box">
+    <div class="critical-title">Conversion rules</div>
+    <p><strong>NQ level ≈ QQQ level × 40</strong></p>
+    <p><strong>QQQ level ≈ NQ level ÷ 40</strong></p>
+    <p>Example: QQQ Call Wall at 480 → NQ ≈ 480 × 40 = 19,200<br>
+    Example: QQQ Put Wall at 460 → NQ ≈ 460 × 40 = 18,400<br>
+    Example: NQ at 21,100 → QQQ ≈ 21,100 ÷ 40 = 527.50</p>
+    <p>The TLADe indicator handles this conversion automatically. You do not need to calculate it manually during the session.</p>
+  </div>
+
+  <h2>Do you need to monitor QQQ directly?</h2>
+  <p>Not if you are using the TLADe indicator on your NQ chart. The indicator fetches QQQ option data and converts all walls, Zero Gamma, Max Pain, and Expected Move bands to NQ price terms. Use Barchart's QQQ GEX page as a secondary sanity check or for a more detailed histogram view before the session.</p>
+
+  <h2>Nuance</h2>
+  <p>The ×40 formula is an approximation. The precise NQ-to-NDX relationship shifts as futures roll quarterly. TLADe accounts for this in its conversion logic (using a 40-point NQ-NDX spread). For most London trading purposes the approximation is accurate enough. The TLADe ticker switcher also allows direct NQ, NDX, or QQQ selection — eliminating the need for manual conversion.</p>
+</div>
+
+<!-- ═══ CH 18 ═══ -->
+<div class="page" id="ch18">
+  <div class="chapter-num">Chapter 18</div>
+  <h1>Tools</h1>
+  <p class="chapter-intro">Which tools to use, what each provides, and the recommended setup for a London NQ trader.</p>
+
+  <h2>Recommended setup</h2>
+  <div class="evidence-box grounded">
+    <div class="badge-grounded">Primary tool</div>
+    <p><strong>TLADe GEX Levels indicator (TradingView, script ID: Ry5ZZ6Y2) — free.</strong> NQ/NDX/QQQ native. Displays Call Wall, Put Wall, Zero Gamma, Max Pain, Expected Move bands, and GEX histogram directly on your NQ chart. Shipped with pre-loaded 5DTE weekly data — add to chart and it works immediately. Flip detection (lines update when price crosses). Built-in alerts. QQQ→NQ conversion handled automatically. 0DTE version in development (invite-only at time of writing).</p>
+  </div>
+
+  <div class="table-wrap"><table>
+    <thead><tr><th>Tool</th><th>Cost</th><th>What it provides</th><th>When to use</th></tr></thead>
+    <tbody>
+      <tr><td>TLADe GEX Levels (TradingView Ry5ZZ6Y2)</td><td>Free</td><td>All GEX levels on NQ chart. Primary tool.</td><td>Always — your core GEX reference</td></tr>
+      <tr><td>Barchart QQQ GEX page</td><td>Free</td><td>Full visual histogram for QQQ by strike. Pre-session histogram shape reference.</td><td>5-minute pre-session review for histogram context</td></tr>
+      <tr><td>OptionCharts.io (QQQ GEX history)</td><td>Free</td><td>Historical GEX chart for QQQ. Context: is today's GEX reading high, low, or normal relative to the past year?</td><td>Weekly — calibrate the magnitude of current GEX</td></tr>
+      <tr><td>SpotGamma.com</td><td>Freemium</td><td>AM Founder's Note (paid). HIRO real-time flow indicator. Vanna model. Professional-grade depth.</td><td>Upgrade once TLADe + Barchart are fully integrated into routine</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- ═══ GLOSSARY ═══ -->
+<div class="page" id="glossary">
+  <div class="part-label">Reference</div>
+  <h1>Glossary</h1>
+  <p class="chapter-intro">All terms used in this reference, defined concisely.</p>
+
+  <div class="table-wrap"><table>
+    <thead><tr><th>Term</th><th>Definition</th></tr></thead>
+    <tbody>
+      <tr><td>NQ</td><td>NASDAQ 100 Futures. 1 point = $20/contract. Tracks top 100 NASDAQ companies. 23 hrs/day.</td></tr>
+      <tr><td>SPX</td><td>S&amp;P 500 Index. 500 largest US companies. Moves with NQ. World's largest options market.</td></tr>
+      <tr><td>QQQ</td><td>Invesco QQQ ETF. Tracks NASDAQ 100. QQQ ≈ NDX ÷ 40 ≈ NQ ÷ 40. Primary GEX data source.</td></tr>
+      <tr><td>NDX</td><td>NASDAQ 100 Cash Index. NDX ≈ NQ. QQQ = NDX ÷ 40.</td></tr>
+      <tr><td>VIX</td><td>Volatility Index. Derived from SPX option prices (23–37 day expiry). VIX ÷ 16 ≈ expected daily % move.</td></tr>
+      <tr><td>CBOE</td><td>Chicago Board Options Exchange. Calculates and publishes VIX. Largest options exchange.</td></tr>
+      <tr><td>GEX</td><td>Gamma Exposure. Net dealer gamma hedging in one number. Positive = shock absorber. Negative = turbocharger.</td></tr>
+      <tr><td>Option</td><td>Contract giving the right (not obligation) to buy (call) or sell (put) at a strike price before expiry. Buyer pays premium = max loss.</td></tr>
+      <tr><td>Call option</td><td>Right to buy at strike. Dealers short calls must sell NQ as price rises toward strike = Call Wall.</td></tr>
+      <tr><td>Put option</td><td>Right to sell at strike. Dealers short puts must buy NQ as price falls toward strike = Put Wall.</td></tr>
+      <tr><td>Strike price</td><td>Specific NQ price level an option targets. High open interest at a strike = gamma wall on chart.</td></tr>
+      <tr><td>Premium</td><td>Fee paid to buy an option. Max loss for buyer. Higher VIX = higher premiums.</td></tr>
+      <tr><td>ITM</td><td>In The Money. Option has intrinsic value now.</td></tr>
+      <tr><td>OTM</td><td>Out of The Money. Option has only potential value — no intrinsic value today.</td></tr>
+      <tr><td>Delta (Δ)</td><td>Rate of option price change per $1 NQ move. Also: probability proxy and dealer hedge ratio. ATM ≈ 0.50 = highest gamma = highest dealer risk.</td></tr>
+      <tr><td>Gamma (Γ)</td><td>Rate of delta change per NQ point. Highest ATM. High gamma = heavy dealer rebalancing per tick = walls, pinning, magnetism.</td></tr>
+      <tr><td>Theta (θ)</td><td>Time decay. Daily erosion of option value as expiry approaches. Accelerates near expiry. 0DTE has almost no theta — only delta remains.</td></tr>
+      <tr><td>Vanna</td><td>Rate of delta change when VIX changes. Active when VIX spikes. Forces dealer NQ selling into selloffs. Reverses violently on VIX collapse = bear market rallies.</td></tr>
+      <tr><td>Implied Volatility (IV)</td><td>Expected future volatility embedded in option prices. High IV = expensive options. VIX is IV for SPX.</td></tr>
+      <tr><td>Vol crush</td><td>Sudden IV drop after known event resolves. Options collapse in price. Vanna flows reverse — causes violent rallies.</td></tr>
+      <tr><td>Dynamic hedging</td><td>Continuous adjustment of dealer NQ futures position as price moves. The engine behind all GEX effects.</td></tr>
+      <tr><td>0DTE</td><td>Zero Days To Expiration. Extreme gamma. Peak during NY RTH (15:30+ CET). Sandcastle walls — reset daily. Not relevant for London planning.</td></tr>
+      <tr><td>5DTE</td><td>Five Days To Expiration. Weekly options. Stable all week. Brick wall structure. Primary GEX tool for London.</td></tr>
+      <tr><td>Open Interest</td><td>Number of option contracts at a given strike. High OI = more dealer hedging = stronger wall = taller histogram bar.</td></tr>
+      <tr><td>Call Wall</td><td>Strike with highest call OI. Resistance ceiling. Dealers sell NQ as price approaches. Break above = dealers flip to buying = acceleration.</td></tr>
+      <tr><td>Put Wall</td><td>Strike with highest put OI. Support floor. Dealers buy NQ as price approaches. Break below = gamma collapses = fast drop.</td></tr>
+      <tr><td>Zero Gamma</td><td>Price where aggregate dealer gamma = zero. Regime switch. Above = shock absorber. Below = turbocharger. Most important intraday structural signal.</td></tr>
+      <tr><td>Max Pain</td><td>Strike where all options lose most total value at expiration. Options sellers profit most here. Price drifts here on expiry day, especially final hour.</td></tr>
+      <tr><td>GEX histogram</td><td>Bar chart showing gamma concentration by strike. Tall = strong wall. No bar = air pocket = fast moves with no dealer cushion.</td></tr>
+      <tr><td>Air pocket</td><td>Gap in GEX histogram. No dealer gamma. Price moves quickly through. Best momentum entry zone after wall break.</td></tr>
+      <tr><td>Expected Move (EH/EL)</td><td>Statistical range bands (±1 SD) from option pricing. Weekly outer boundaries of normal NQ behaviour. Shown by TLADe.</td></tr>
+      <tr><td>Pinning</td><td>Price oscillating around a heavy strike. Visible as wicks + no follow-through on M15. Wait for the directional break — do not trade the chop.</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- ═══ GEX SIMULATOR ═══ -->
+<div class="page" id="sim-gex">
+  <div class="part-label">Interactive</div>
+  <h1>GEX Regime Simulator</h1>
+  <p class="chapter-intro">Three regime states — see how each shapes NQ price behaviour.</p>
+
+  <div class="tool-section">
+    <div class="tool-title">GEX Regime Simulator</div>
+    <div class="tool-desc">Select a regime to see a simulated NQ session. The VWAP line (gold dashed) shows the session centre. Observe how dealer flow shapes price paths differently in each regime.</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;">
+      <button class="s-btn active" onclick="setRegime('positive',this)">Positive GEX — Shock Absorber</button>
+      <button class="s-btn" onclick="setRegime('neutral',this)">Near Zero — No Interference</button>
+      <button class="s-btn" onclick="setRegime('negative',this)">Negative GEX — Turbocharger</button>
+    </div>
+    <canvas id="gexChart" height="200" style="width:100%;border:1px solid var(--border);border-radius:4px;"></canvas>
+    <div style="font-family:-apple-system,sans-serif;font-size:13px;color:var(--text-sec);margin-top:10px;line-height:1.55;" id="chartReading">Positive GEX — Dealers buying dips and selling rallies. Price oscillates around VWAP. Fades work.</div>
+  </div>
+</div>
+
+<!-- ═══ WALL SIMULATOR ═══ -->
+<div class="page" id="sim-walls">
+  <div class="part-label">Interactive</div>
+  <h1>Wall Simulator</h1>
+  <p class="chapter-intro">Drag price through the wall map — observe how dealer behaviour changes at each level.</p>
+
+  <div class="tool-section">
+    <div class="tool-title">5DTE Wall Map — drag to explore</div>
+    <div class="tool-desc">Move the price slider to position NQ at different levels relative to the 5DTE wall structure. The status panel explains what dealers are doing and what your positioning bias should be.</div>
+    <div class="sim-wrap">
+      <div class="sim-slider-row">
+        <span style="font-family:-apple-system,sans-serif;font-size:12px;color:var(--text-muted);">NQ Price</span>
+        <input type="range" id="priceSlider" min="20400" max="21500" value="21050" step="25">
+        <span class="sim-price" id="priceDisplay">21,050</span>
+      </div>
+      <div class="wall-map" id="wallMap"></div>
+      <div class="sim-status" id="simStatus">Loading...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ EXAM ═══ -->
+<div class="page" id="exam">
+  <div class="part-label">Interactive</div>
+  <h1>Knowledge Exam</h1>
+  <p class="chapter-intro">Twelve questions covering all chapters — select an answer for each before submitting.</p>
+
+  <div class="score-display" id="scoreDisplay"></div>
+  <div id="examQuestions"></div>
+  <button class="submit-btn" id="submitBtn" onclick="submitExam()">Submit answers</button>
+  <div class="score-result" id="scoreResult">
+    <div class="score-big" id="scoreBig"></div>
+    <div class="score-msg" id="scoreMsg"></div>
+    <br><button class="retry-btn" onclick="resetExam()">Restart exam</button>
+  </div>
+</div>
+
+</div><!-- end #content -->
+
+<script>
+// ── PAGE NAVIGATION ──
+let currentPage = 'cover';
+function show(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  const pg = document.getElementById(id);
+  if (pg) { pg.classList.add('active'); currentPage = id; }
+  document.querySelectorAll('.nav-link').forEach(l => {
+    if (l.getAttribute('onclick') && l.getAttribute('onclick').includes("'" + id + "'")) l.classList.add('active');
+  });
+  document.getElementById('content').scrollTop = 0;
+  window.scrollTo(0,0);
+  if (id === 'sim-gex') { setTimeout(() => setRegime('positive', document.querySelector('.s-btn.active')), 100); }
+  if (id === 'sim-walls') { updateWalls(); }
+  if (id === 'exam' && !examBuilt) { buildExam(); }
+}
+
+// ── SIDEBAR TOGGLE ──
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+function togglePart(el) {
+  el.classList.toggle('collapsed');
+  el.nextElementSibling.classList.toggle('collapsed');
+}
+
+// ── DARK MODE ──
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+if (prefersDark) document.body.classList.add('dark');
+
+// ── READING PROGRESS ──
+window.addEventListener('scroll', () => {
+  const total = document.body.scrollHeight - window.innerHeight;
+  const pct = total > 0 ? window.scrollY / total : 0;
+  document.getElementById('rbar').style.transform = `scaleX(${pct})`;
+});
+
+// ── CHECKLIST ──
+function toggleCL(li) {
+  const cb = li.querySelector('input[type="checkbox"]');
+  cb.checked = !cb.checked;
+  li.classList.toggle('checked', cb.checked);
+}
+
+// ── GEX SIMULATOR ──
+let currentRegime = 'positive';
+function setRegime(regime, btn) {
+  currentRegime = regime;
+  document.querySelectorAll('#sim-gex .s-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const msgs = {
+    positive: 'Positive GEX — Dealers are buying dips and selling rallies (shock absorber). Price oscillates around VWAP. Fade setups outperform.',
+    neutral: 'Near Zero GEX — No systematic dealer interference. Pure price discovery. Read the initial balance carefully and wait for directional acceptance.',
+    negative: 'Negative GEX — Dealers are amplifying moves (turbocharger). Trends extend beyond normal structure. Do not fade strong directional moves.'
+  };
+  document.getElementById('chartReading').textContent = msgs[regime];
+  drawGEXChart(regime);
+}
+function drawGEXChart(regime) {
+  const canvas = document.getElementById('gexChart');
+  if (!canvas) return;
+  const W = canvas.offsetWidth; const H = 200;
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  const isDark = document.body.classList.contains('dark');
+  const bg = isDark ? '#181820' : '#F4F4F2';
+  const gridC = isDark ? '#22223080' : '#E0E0DD';
+  const gold = isDark ? '#C8A840' : '#9A7B20';
+  const col = regime === 'positive' ? (isDark ? '#2AAA70' : '#1B6B40') : regime === 'negative' ? (isDark ? '#E05040' : '#8A2020') : gold;
+
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+  const pts = []; let price = H / 2; const centre = H / 2; let mom = 0;
+  for (let i = 0; i < Math.floor(W / 5); i++) {
+    const noise = (Math.random() - 0.5) * 8;
+    if (regime === 'positive') { mom = mom * 0.6 + noise * 0.3; price += mom + (centre - price) * 0.14; }
+    else if (regime === 'negative') { mom = mom * 0.93 + noise * 0.72; price += mom; }
+    else { mom = mom * 0.72 + noise * 0.5; price += mom; }
+    price = Math.max(20, Math.min(H - 20, price));
+    pts.push(price);
+  }
+
+  // Grid
+  ctx.strokeStyle = gridC; ctx.lineWidth = 0.5;
+  for (let y = 0; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+
+  // VWAP line
+  ctx.strokeStyle = isDark ? 'rgba(200,168,64,0.4)' : 'rgba(154,123,32,0.35)';
+  ctx.lineWidth = 1; ctx.setLineDash([5, 4]);
+  ctx.beginPath(); ctx.moveTo(0, centre); ctx.lineTo(W, centre); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Price line
+  ctx.strokeStyle = col; ctx.lineWidth = 1.8;
+  ctx.beginPath();
+  pts.forEach((p, i) => i === 0 ? ctx.moveTo(0, p) : ctx.lineTo(i * 5, p));
+  ctx.stroke();
+
+  // Fill
+  ctx.fillStyle = col.replace(')', ', 0.05)').replace('rgb', 'rgba');
+  ctx.lineTo((pts.length - 1) * 5, H); ctx.lineTo(0, H); ctx.fill();
+
+  // VWAP label
+  ctx.fillStyle = isDark ? 'rgba(200,168,64,0.55)' : 'rgba(154,123,32,0.6)';
+  ctx.font = '10px -apple-system,sans-serif'; ctx.textAlign = 'left';
+  ctx.fillText('VWAP', 6, centre - 5);
+}
+window.addEventListener('resize', () => { if (currentPage === 'sim-gex') drawGEXChart(currentRegime); });
+
+// ── WALL SIMULATOR ──
+const WALLS = { cw2: 21450, cw: 21200, zg: 21000, mp: 20950, pw: 20800, pw2: 20600 };
+const LEVELS = [
+  { p: 21450, type: 'cw2', label: '21,450', tag: 'Secondary Call Wall' },
+  { p: 21200, type: 'cw', label: '21,200', tag: 'Call Wall (primary)' },
+  { p: 21100, type: 'med', label: '21,100', tag: 'minor call gamma' },
+  { p: 21000, type: 'zg', label: '21,000', tag: 'Zero Gamma' },
+  { p: 20950, type: 'mp', label: '20,950', tag: 'Max Pain' },
+  { p: 20800, type: 'pw', label: '20,800', tag: 'Put Wall (primary)' },
+  { p: 20600, type: 'pw2', label: '20,600', tag: 'Secondary Put Wall' },
+];
+const BAR_W = { cw2: 42, cw: 82, med: 14, zg: 35, mp: 26, pw: 90, pw2: 50 };
+const BAR_C = {
+  cw2: 'rgba(27,106,64,0.35)', cw: 'rgba(27,106,64,0.65)',
+  med: 'rgba(154,123,32,0.2)', zg: 'rgba(154,123,32,0.38)',
+  mp: 'rgba(200,120,30,0.4)', pw: 'rgba(138,32,32,0.65)', pw2: 'rgba(138,32,32,0.35)'
+};
+const TAG_C = { cw2: 'var(--win)', cw: 'var(--win)', med: 'var(--text-muted)', zg: 'var(--gold)', mp: 'var(--gold-light)', pw: 'var(--loss)', pw2: 'var(--loss)' };
+
+function updateWalls() {
+  const nq = parseInt(document.getElementById('priceSlider').value);
+  document.getElementById('priceDisplay').textContent = nq.toLocaleString();
+  const map = document.getElementById('wallMap'); map.innerHTML = '';
+
+  const rows = [...LEVELS];
+  const idx = rows.findIndex(l => l.p < nq);
+  const curr = { p: nq, type: 'current', label: nq.toLocaleString() + ' ▶', tag: 'current price' };
+  if (idx === -1) rows.push(curr); else rows.splice(idx, 0, curr);
+
+  rows.forEach(lv => {
+    const div = document.createElement('div');
+    div.className = 'wall-row' + (lv.type === 'cw' || lv.type === 'cw2' ? ' cw' : lv.type === 'pw' || lv.type === 'pw2' ? ' pw' : lv.type === 'zg' ? ' zg' : lv.type === 'current' ? ' current' : '');
+    const bw = lv.type === 'current' ? 3 : (BAR_W[lv.type] || 5);
+    const bc = lv.type === 'current' ? 'var(--gold)' : (BAR_C[lv.type] || 'rgba(0,0,0,0.1)');
+    const tc = lv.type === 'current' ? 'var(--gold)' : (TAG_C[lv.type] || 'var(--text-muted)');
+    div.innerHTML = `<div class="wall-price" style="color:${tc}">${lv.label}</div>
+      <div class="wall-bar-wrap"><div class="wall-bar-track"><div class="wall-bar-fill" style="width:${bw}%;background:${bc};"></div></div></div>
+      <div class="wall-tag" style="color:${tc};font-family:-apple-system,sans-serif;">${lv.tag}</div>`;
+    map.appendChild(div);
+  });
+
+  let status = '';
+  if (nq > WALLS.cw) status = `<strong>Above Call Wall (${WALLS.cw.toLocaleString()})</strong> — dealers have flipped to buying. Short calls are now deep ITM; gamma collapses on the sold strikes. Mechanical buying above. Move can accelerate. Target: secondary Call Wall ${WALLS.cw2.toLocaleString()}. Do not fade — dealer flow is now directionally with long positions.`;
+  else if (nq >= WALLS.cw - 75) status = `<strong>Approaching Call Wall (${WALLS.cw.toLocaleString()})</strong> — dealer selling intensifying as price nears this strike. Strong mechanical resistance building. High-probability fade zone. Do not chase longs into this wall. Look for absorption or sweep+reclaim trigger to enter short.`;
+  else if (nq > WALLS.zg) status = `<strong>Inside range — above Zero Gamma (${WALLS.zg.toLocaleString()}), below Call Wall (${WALLS.cw.toLocaleString()})</strong> — positive gamma regime. Dealers acting as shock absorbers. Mean-reversion and VWAP fade setups favoured. Both walls active as structural reference.`;
+  else if (nq >= WALLS.zg - 50) status = `<strong>Zero Gamma zone (${WALLS.zg.toLocaleString()})</strong> — regime transition. Dealers balanced between dampening and amplifying. Oscillation likely. Wait for clear directional acceptance with volume above or below this level before committing. This is the most important intraday structural signal.`;
+  else if (nq > WALLS.pw) status = `<strong>Below Zero Gamma — negative gamma territory</strong> — dealers now amplifying moves. Heading toward Put Wall support at ${WALLS.pw.toLocaleString()}. Do not fade strong directional moves. If Put Wall holds → bounce opportunity. If it breaks → fast move through air pocket to ${WALLS.pw2.toLocaleString()}.`;
+  else if (nq > WALLS.pw2) status = `<strong>Put Wall broken (${WALLS.pw.toLocaleString()})</strong> — mechanical support gone. Puts are deep ITM; gamma collapses; dealer buying fades. Air pocket between ${WALLS.pw.toLocaleString()} and ${WALLS.pw2.toLocaleString()}. Do not catch the falling market. Wait for acceptance below. Target: secondary Put Wall ${WALLS.pw2.toLocaleString()}.`;
+  else status = `<strong>Below secondary Put Wall (${WALLS.pw2.toLocaleString()})</strong> — major support levels broken. High-volatility regime. Use Expected Move bands (EH/EL on TLADe) as outer reference. Look for the next GEX level on the histogram as your structural target.`;
+
+  document.getElementById('simStatus').innerHTML = status;
+}
+document.getElementById('priceSlider').addEventListener('input', updateWalls);
+
+// ── EXAM ──
+let examBuilt = false;
+let answered = {};
+const questions = [
+  { q: "An option's price changes because of three drivers. Which of these is NOT one of them?", opts: ["NQ price moving (delta effect)", "Time passing (theta / time decay)", "The broker's commission rate", "Market nervousness changing (implied volatility)"], correct: 2, fb: "The three drivers are: price moves (delta), time passing (theta), and IV changing (nervousness). Broker commissions are a transaction cost — not an option pricing driver." },
+  { q: "The lottery ticket analogy in Chapter 3 illustrates which concept?", opts: ["How GEX is calculated", "Time decay (theta) — options lose value as expiry approaches even without price moving", "Why dealers hedge dynamically", "How vol crush affects NQ"], correct: 1, fb: "A lottery ticket loses its potential value as the draw approaches. An option is identical: time passing (theta) erodes its value daily, even if NQ doesn't move. This is why 0DTE options have almost no time value — only raw delta remains." },
+  { q: "Why is an ATM delta (~0.50) option the most dangerous for dealers?", opts: ["ATM options are the cheapest to buy", "ATM options have the highest gamma — delta changes most rapidly per NQ point moved, requiring most aggressive rebalancing", "VIX is always highest when options are ATM", "Dealers cannot legally hedge ATM options"], correct: 1, fb: "Gamma is highest when an option is at-the-money. High gamma means delta changes rapidly with every NQ tick — forcing dealers to rebalance their NQ futures hedge most aggressively. This is the mechanical origin of Call Walls and Put Walls." },
+  { q: "The ASCII curve diagram in Chapter 5 shows that a single futures contract cannot perfectly hedge an option. Why?", opts: ["Futures are too expensive to use as a hedge", "The option's payoff obligation curves non-linearly as NQ moves, while a futures contract is linear — the mismatch forces continuous rebalancing", "The CBOE prohibits static hedges", "Dealers prefer not to use futures for hedging"], correct: 1, fb: "The option's payoff curves upward past the strike — the obligation grows faster than a linear futures contract can track. The mismatch between the curved obligation and the straight hedge compels dealers to adjust their futures position continuously as NQ moves." },
+  { q: "In a negative GEX regime, NQ begins rallying. What do dealers do and what is the result?", opts: ["Dealers sell NQ — dampening the rally", "Dealers buy NQ to rebalance their delta — adding buying pressure and creating a self-reinforcing feedback loop", "Dealers do nothing until price reaches a wall level", "Dealers wait for VIX to rise before acting"], correct: 1, fb: "Negative GEX = dealers are short gamma. When NQ rises, their delta exposure increases and they must BUY futures to rebalance. That buying pushes NQ higher, triggering more buying — the turbocharger feedback loop from Chapter 6." },
+  { q: "What is the correct distinction between 0DTE and 5DTE walls for a London session trader?", opts: ["0DTE options have higher premiums than 5DTE", "5DTE options only exist on Fridays", "0DTE walls form and expire within one day (sandcastle, active during NY RTH). 5DTE walls are stable all week (brick wall, fully established at London open)", "0DTE data is more accurate because it reflects today's conditions"], correct: 2, fb: "0DTE options are mostly active during NY RTH — 15:30+ CET, well after the London session. 5DTE walls are set Sunday/Monday and stable all week. For London 08:00–12:00 CET, 5DTE is your structural framework." },
+  { q: "NQ breaks below the Put Wall on high volume. What should you expect?", opts: ["The Put Wall strengthens — dealers buy even more aggressively", "The mechanical support fades — puts go deep ITM, gamma collapses, dealer buying disappears. Fast move to secondary Put Wall follows", "VIX automatically drops, causing vol crush", "Max Pain moves down to the broken level"], correct: 1, fb: "When puts go deep ITM, delta approaches −1.0 and gamma collapses. Dealers no longer need to rebalance aggressively — the mechanical floor disappears. Price falls into the air pocket between Put Wall and secondary Put Wall." },
+  { q: "Your pre-session Obsidian note: GEX = positive | VIX = 12, falling | NQ at 21,050 | PW = 20,800 | CW = 21,200 | ZG = 21,000. What is your session bias?", opts: ["Trend-follow long — positive GEX and low VIX confirm bullish direction", "Fade bias — shock absorber regime, price inside range, VWAP mean-reversion setups favoured, walls as reference levels", "Wait — VIX below 15 means no reliable setups", "Short bias — price must fall to the Put Wall before any longs are valid"], correct: 1, fb: "Positive GEX + VIX low and falling + price inside range = ideal shock absorber day. Dealers buy dips and sell rallies. VWAP mean-reversion and stop-run setups get a structural tailwind. Call Wall (21,200) = resistance reference. Put Wall (20,800) = support reference." },
+  { q: "The GEX histogram shows a large gap (no bars) between 20,800 and 20,600. What does this mean?", opts: ["An error in the indicator data", "This zone has double the dealer gamma of the walls on either side", "An air pocket — no dealer gamma cushion. Price moves quickly here with no mechanical support or resistance", "Max Pain sits in this zone"], correct: 2, fb: "A gap in the GEX histogram = air pocket. No gamma concentration = no dealer hedging cushion. Price entering an air pocket travels quickly in either direction to the next wall. These gaps are momentum entry zones after a wall breaks — not reversal zones." },
+  { q: "When does vanna force rapid NQ selling specifically?", opts: ["When NQ price falls to the Put Wall", "When VIX spikes upward — even before NQ price has broken any major structural level", "When 5DTE options expire on Friday", "When the GEX histogram shows a positive reading"], correct: 1, fb: "Vanna is delta sensitivity to IV changes. When VIX spikes, dealers' deltas shift and they must sell NQ to rebalance — even if NQ price hasn't broken a structural level yet. This is why selloffs can accelerate before any visible chart level is violated." },
+  { q: "QQQ's Call Wall is at 490. What is the approximate NQ equivalent?", opts: ["490 NQ points", "9,800", "19,600", "49,000"], correct: 2, fb: "NQ ≈ QQQ × 40. So 490 × 40 = 19,600. The TLADe indicator does this conversion automatically, but understanding the formula allows a manual sanity check when needed." },
+  { q: "When does a 5DTE wall expire and reset for the following week?", opts: ["Monday morning at London open", "Wednesday at NY close", "Friday after market close — new weekly options open Sunday evening, creating fresh 5DTE walls for the following week", "Daily at midnight"], correct: 2, fb: "5DTE (weekly) options expire each Friday. The structural walls built from that week's open interest fade as expiry approaches. New weekly options open Sunday evening, resetting the 5DTE structural map for the following Monday–Friday trading sessions." },
+];
+
+function buildExam() {
+  examBuilt = true;
+  answered = {};
+  const container = document.getElementById('examQuestions');
+  container.innerHTML = '';
+  questions.forEach((q, qi) => {
+    const div = document.createElement('div');
+    div.className = 'question-block';
+    div.id = 'qb-' + qi;
+    div.innerHTML = `<div class="question-label">Question ${qi + 1} of ${questions.length}</div>
+      <div class="question-text">${q.q}</div>
+      <div class="answer-grid" id="ag-${qi}">
+        ${q.opts.map((o, oi) => `<button class="ans-btn" onclick="selectAnswer(${qi},${oi})">${o}</button>`).join('')}
+      </div>
+      <div class="feedback-line" id="fl-${qi}"></div>`;
+    container.appendChild(div);
+  });
+  document.getElementById('scoreResult').classList.remove('show');
+  document.getElementById('submitBtn').style.display = 'block';
+  document.getElementById('scoreDisplay').textContent = '';
+}
+
+function selectAnswer(qi, oi) {
+  if (answered[qi] !== undefined) return;
+  answered[qi] = oi;
+  const btns = document.querySelectorAll(`#ag-${qi} .ans-btn`);
+  if (oi === questions[qi].correct) { btns[oi].classList.add('sel-correct'); }
+  else { btns[oi].classList.add('sel-wrong'); btns[questions[qi].correct].classList.add('show-correct'); }
+}
+
+function submitExam() {
+  questions.forEach((_, qi) => { if (answered[qi] === undefined) answered[qi] = -1; });
+  let score = 0;
+  questions.forEach((q, qi) => {
+    const correct = answered[qi] === q.correct;
+    if (correct) score++;
+    document.getElementById('qb-' + qi).classList.add(correct ? 'correct' : 'wrong');
+    const fl = document.getElementById('fl-' + qi);
+    fl.className = 'feedback-line show ' + (correct ? 'correct' : 'wrong');
+    fl.textContent = (correct ? '✓ Correct. ' : '✗ Incorrect. ') + q.fb;
+    document.querySelectorAll(`#ag-${qi} .ans-btn`).forEach(b => b.disabled = true);
+  });
+  const pct = score / questions.length;
+  let msg;
+  if (pct === 1) msg = 'All twelve correct. You have a thorough working understanding of options market structure as it applies to NQ futures trading.';
+  else if (pct >= 0.83) msg = 'Strong result. Review the questions marked incorrect and re-read the corresponding chapters before your next session.';
+  else if (pct >= 0.67) msg = 'Reasonable foundation. Focus particularly on Chapters 5–8 (dealer hedging, feedback loops, 0DTE vs 5DTE).';
+  else msg = 'Work through Chapters 3–8 again in sequence. The concepts are layered — each builds on the one before.';
+  document.getElementById('scoreBig').textContent = score + ' / ' + questions.length;
+  document.getElementById('scoreMsg').textContent = msg;
+  document.getElementById('scoreResult').classList.add('show');
+  document.getElementById('submitBtn').style.display = 'none';
+  document.getElementById('scoreResult').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function resetExam() {
+  buildExam();
+  document.getElementById('examQuestions').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+</body>
+</html>
